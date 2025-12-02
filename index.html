@@ -3,116 +3,191 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>@namakamu</title>
-  <meta name="description" content="All of my links in one place."/>
+  <title>Rexsaa Site</title>
+  <meta name="description" content="Link Bio Rexsaa Site"/>
+  <meta name="theme-color" content="#000000">
 
-  <!-- Tailwind CSS CDN -->
+  <!-- Libraries -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- AOS Animation Library -->
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.0/dist/vanilla-tilt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <!-- QR Code Library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
-  <!-- Font: Satoshi (mirip Lynk.id) atau fallback Inter -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    .glass { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
-    .gradient-bg { background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 50%, #16213e 100%); }
-    .btn-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4); }
+    :root { --bg: #0a0a0a; --text: #ffffff; --card: rgba(255,255,255,0.05); --accent: #8b5cf6; }
+    [data-theme="light"] { --bg: #f9fafb; --text: #111111; --card: rgba(0,0,0,0.05); --accent: #a78bfa; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); transition: all 0.6s; overflow-x: hidden; }
+    #particles-js { position: fixed; inset: 0; z-index: 1; }
+    .content { position: relative; z-index: 10; }
+    .glass { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    .mouse-trail { position: fixed; width: 24px; height: 24px; pointer-events: none; border-radius: 50%; background: radial-gradient(circle, #8b5cf6 10%, transparent 70%); transform: translate(-50%, -50%); z-index: 9999; opacity: 0.6; mix-blend-mode: screen; }
+    .gradient-text { background: linear-gradient(90deg, #8b5cf6, #ec4899, #06b6d4); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .blink { animation: blink 1s infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .animate-spin-slow { animation: spin-slow 20s linear infinite; }
   </style>
 </head>
-<body class="min-h-screen gradient-bg text-white flex flex-col items-center justify-center px-6 py-12">
+<body class="min-h-screen flex items-center justify-center">
 
-  <!-- Background decorative blobs -->
-  <div class="fixed inset-0 -z-10 overflow-hidden">
-    <div class="absolute -top-40 -right-40 w-96 h-96 bg-purple-900 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-900 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse delay-1000"></div>
-  </div>
+  <!-- Mouse Trail -->
+  <div id="trail" class="mouse-trail"></div>
 
-  <div class="max-w-md w-full" data-aos="fade-down" data-aos-duration="1000">
+  <!-- Particles Background -->
+  <div id="particles-js"></div>
 
-    <!-- Profile Section -->
-    <div class="text-center mb-12">
-      <div class="relative inline-block">
-        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
-             alt="Profile" 
-             class="w-32 h-32 rounded-full mx-auto border-4 border-white/20 shadow-2xl object-cover"/>
-        <div class="absolute inset-0 rounded-full bg-gradient-to-tr from-purple-600 to-blue-600 opacity-40 blur-xl"></div>
+  <div class="content max-w-md w-full px-6 py-12">
+
+    <!-- Theme Toggle -->
+    <button id="themeToggle" class="fixed top-6 right-6 z-50 w-14 h-14 rounded-full glass border border-white/20 flex items-center justify-center text-2xl hover:scale-110 transition shadow-lg">
+      <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- QR Code Button (atas kanan kiri toggle) -->
+    <button id="qrBtn" class="fixed top-6 left-6 z-50 w-14 h-14 rounded-full glass border border-white/20 flex items-center justify-center text-2xl hover:scale-110 transition shadow-lg">
+      <i class="fas fa-qrcode"></i>
+    </button>
+
+    <div class="text-center">
+
+      <!-- Avatar dengan ring berputar -->
+      <div class="relative mx-auto w-44 h-44 mb-10 group">
+        <div class="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 via-pink-500 to-cyan-500 blur-3xl opacity-70 group-hover:opacity-100 animate-pulse"></div>
+        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+             class="relative w-full h-full rounded-full object-cover border-4 border-white/30 shadow-2xl"/>
+        <div class="absolute inset-0 rounded-full border-4 border-white/10 animate-spin-slow"></div>
       </div>
-      <h1 class="mt-6 text-4xl font-bold tracking-tight">@namakamu</h1>
-      <p class="mt-2 text-gray-300 text-lg">Content Creator • Photographer • Digital Nomad</p>
-      
+
+      <!-- Typing Name -->
+      <h1 class="text-6xl font-black mb-4">
+        <span id="typed" class="gradient-text"></span><span class="blink">|</span>
+      </h1>
+      <p class="text-gray-400 text-lg mb-10">Digital Creator • Photographer • Living the dream</p>
+
       <!-- Social Icons -->
-      <div class="flex gap-4 justify-center mt-6">
-        <a href="#" class="w-10 h-10 rounded-full bg-white/10 glass flex items-center justify-center hover:bg-white/20 transition btn-hover">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.04c-5.5 0-9.96 4.47-9.96 9.96 0 4.41 2.86 8.17 6.84 9.49.5.09.68-.22.68-.48 0-.24-.01-.87-.01-1.71-2.78.6-3.37-1.34-3.37-1.34-.45-1.15-1.11-1.46-1.11-1.46-.91-.62.07-.61.07-.61 1.01.07 1.54 1.03 1.54 1.03.9 1.54 2.36 1.1 2.94.84.09-.65.35-1.1.64-1.35-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.93.36.31.68 0.92.68 1.85 0 1.34-.01 2.42-.01 2.75 0 .27.18.58.69.48 3.97-1.33 6.82-5.08 6.82-9.49 0-5.49-4.46-9.96-9.96-9.96z"/></svg>
+      <div class="flex justify-center gap-6 mb-12">
+        <a href="#" class="w-16 h-16 rounded-2xl glass border border-white/20 flex items-center justify-center text-3xl hover:scale-125 transition tilt" data-tilt><i class="fab fa-instagram gradient-text"></i></a>
+        <a href="#" class="w-16 h-16 rounded-2xl glass border border-white/20 flex items-center justify-center text-3xl hover:scale-125 transition tilt" data-tilt><i class="fab fa-tiktok"></i></a>
+        <a href="#" class="w-16 h-16 rounded-2xl glass border border-white/20 flex items-center justify-center text-3xl hover:scale-125 transition tilt" data-tilt><i class="fab fa-youtube text-red-500"></i></a>
+      </div>
+
+      <!-- Links dengan 3D Tilt -->
+      <div class="space-y-6">
+        <a href="https://instagram.com/elgarexsaa" target="_blank" class="block" data-tilt data-tilt-glare data-tilt-max-glare="0.5">
+          <div class="glass bg-white/5 border border-white/10 rounded-3xl p-8 text-center font-bold text-2xl hover:bg-white/10 transition tilt cursor-pointer" onclick="playSound()">
+            <span class="gradient-text">Instagram</span>
+          </div>
         </a>
-        <a href="#" class="w-10 h-10 rounded-full bg-white/10 glass flex items-center justify-center hover:bg-white/20 transition btn-hover">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.28 4.28 0 0 0 1.88-2.36 8.59 8.59 0 0 1-2.72 1.04 4.27 4.27 0 0 0-7.28 3.89A12.12 12.12 0 0 1 3.09 4.81a4.27 4.27 0 0 0 1.32 5.7c-.71-.02-1.38-.22-1.96-.54v.05c0 2.07 1.47 3.8 3.42 4.2-.36.1-.74.15-1.13.15-.28 0-.55-.03-.81-.08.55 1.71 2.14 2.95 4.03 2.99a8.57 8.57 0 0 1-5.31 1.83c-.34 0-.68-.02-1.02-.06a12.09 12.09 0 0 0 6.56 1.92c7.87 0 12.18-6.52 12.18-12.18 0-.19-.01-.37-.02-.56.84-.6 1.56-1.36 2.13-2.22z"/></svg>
+
+        <a href="https://youtube.com/elgaganz" target="_blank" class="block" data-tilt>
+          <div class="glass bg-white/5 border border-white/10 rounded-3xl p-8 text-center font-bold text-2xl hover:bg-white/10 transition tilt cursor-pointer" onclick="playSound()">
+            <span class="gradient-text">YouTube Channel</span>
+          </div>
         </a>
-        <a href="#" class="w-10 h-10 rounded-full bg-white/10 glass flex items-center justify-center hover:bg-white/20 transition btn-hover">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.04c-5.5 0-9.96 4.47-9.96 9.96 0 5.04 3.75 9.13 8.62 9.87v-6.96h-2.59v-2.86h2.59v-2.18c0-2.56 1.52-3.98 3.85-3.98.11 0 .22 0 .33.01v2.43h-1.87c-1.04 0-1.36.64-1.36 1.3v1.56h2.98l-.48 2.86h-2.5v6.96c4.87-.73 8.62-4.82 8.62-9.87 0-5.49-4.46-9.96-9.96-9.96z"/></svg>
+
+        <a href="https://tiktok.com/rexsaa4a" target="_blank" class="block" data-tilt>
+          <div class="glass bg-white/5 border border-white/10 rounded-3xl p-8 text-center font-bold text-2xl hover:bg-white/10 transition tilt cursor-pointer" onclick="playSound()">
+            TikTok
+          </div>
+        </a>
+
+        <a href="https://shop.namakamu.com" target="_blank" class="block" onclick="confetti({particleCount:200, spread:90, origin:{y:0.7}})" data-tilt data-tilt-max="10">
+          <div class="glass bg-gradient-to-r from-purple-600/30 to-pink-600/30 border border-purple-500/50 rounded-3xl p-9 text-center font-black text-3xl hover:scale-105 transition tilt shadow-2xl shadow-purple-500/40 cursor-pointer" onclick="playSound()">
+            Shop
+          </div>
+        </a>
+
+        <a href="mailto:rexsaelga@gmail.com" class="block" data-tilt>
+          <div class="glass bg-white/5 border border-white/10 rounded-3xl p-8 text-center font-bold text-2xl hover:bg-white/10 transition tilt cursor-pointer" onclick="playSound()">
+            Mail
+          </div>
         </a>
       </div>
-    </div>
 
-    <!-- Links Section -->
-    <div class="space-y-4">
-      <!-- Link 1 -->
-      <a href="https://instagram.com" target="_blank" class="block group">
-        <div data-aos="fade-up" data-aos-delay="100"
-             class="glass bg-white/10 border border-white/20 rounded-2xl p-6 text-center font-medium text-lg transition-all duration-300 btn-hover group-hover:bg-white/20">
-          <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Follow Instagramku</span>
-        </div>
-      </a>
-
-      <!-- Link 2 -->
-      <a href="https://youtube.com" target="_blank" class="block group">
-        <div data-aos="fade-up" data-aos-delay="200"
-             class="glass bg-white/10 border border-white/20 rounded-2xl p-6 text-center font-medium text-lg transition-all duration-300 btn-hover group-hover:bg-white/20">
-          <span class="bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">Subscribe YouTube</span>
-        </div>
-      </a>
-
-      <!-- Link 3 -->
-      <a href="https://tiktok.com" target="_blank" class="block group">
-        <div data-aos="fade-up" data-aos-delay="300"
-             class="glass bg-white/10 border border-white/20 rounded-2xl p-6 text-center font-medium text-lg transition-all duration-300 btn-hover group-hover:bg-white/20">
-          TikTok – Behind The Scenes
-        </div>
-      </a>
-
-      <!-- Link 4 -->
-      <a href="https://shop.com" target="_blank" class="block group">
-        <div data-aos="fade-up" data-aos-delay="400"
-             class="glass bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-6 text-center font-semibold text-lg transition-all duration-300 btn-hover shadow-lg">
-          🛒 Beli Preset & Merch Disini
-        </div>
-      </a>
-
-      <!-- Link 5 -->
-      <a href="mailto:hello@namakamu.com" class="block group">
-        <div data-aos="fade-up" data-aos-delay="500"
-             class="glass bg-white/10 border border-white/20 rounded-2xl p-6 text-center font-medium text-lg transition-all duration-300 btn-hover group-hover:bg-white/20">
-          📧 Kolaborasi? Hubungi Saya
-        </div>
-      </a>
-    </div>
-
-    <!-- Footer -->
-    <div class="mt-12 text-center text-gray-500 text-sm">
-      <p>© 2025 @namakamu • Made with ❤️ and lots of coffee</p>
+      <p class="text-center mt-16 text-gray-500 text-sm">© 2025 @namakamu — Built to dominate</p>
     </div>
   </div>
+
+  <!-- QR Code Modal -->
+  <div id="qrModal" class="fixed inset-0 bg-black/80 glass flex items-center justify-center z-50 hidden">
+    <div class="relative bg-white/10 glass border border-white/20 rounded-3xl p-10 max-w-xs w-full text-center animate-pulse">
+      <button class="absolute top-4 right-4 text-3xl text-white/70 hover:text-white" onclick="document.getElementById('qrModal').classList.add('hidden')">&times;</button>
+      <h3 class="text-2xl font-bold mb-6 gradient-text">Scan Me</h3>
+      <div id="qrcode" class="mx-auto"></div>
+      <p class="mt-6 text-sm text-gray-300">Arahkan kamera untuk langsung ke profile</p>
+    </div>
+  </div>
+
+  <!-- Click Sound -->
+  <audio id="clickSound" src="https://freesound.org/data/previews/612/612637_5674468-lq.mp3" preload="auto"></audio>
 
   <script>
-    AOS.init({
-      once: true,
-      duration: 800,
-      easing: 'ease-out-cubic'
+    // Ganti URL ini dengan link bio kamu yang sebenarnya!
+    const MY_URL = elrexsaa.github.io/io;
+
+    // Typing
+    new Typed('#typed', {
+      strings: ["@namakamu", "Creator", "Visioner", "Legend"],
+      typeSpeed: 100,
+      backSpeed: 60,
+      loop: true,
+      showCursor: false
     });
+
+    // Particles Ultimate
+    particlesJS("particles-js", {
+      particles: { number: { value: 120 }, color: { value: ["#8b5cf6","#ec4899","#06b6d4","#fbbf24"] },
+        shape: { type: ["circle","star"] }, opacity: { value: 0.6, random: true }, size: { value: 4, random: true },
+        line_linked: { enable: true, distance: 140, color: "#ffffff", opacity: 0.2, width: 1 },
+        move: { enable: true, speed: 3, out_mode: "bounce" }
+      },
+      interactivity: { events: { onhover: { enable: true, mode: "grab" }, onclick: { enable: true, mode: "push" }}},
+      retina_detect: true
+    });
+
+    // Mouse Trail
+    document.addEventListener('mousemove', e => {
+      document.getElementById('trail').style.left = e.clientX + 'px';
+      document.getElementById('trail').style.top = e.clientY + 'px';
+    });
+
+    // Theme Toggle
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      document.documentElement.setAttribute('data-theme', isLight ? 'dark' : 'light');
+      document.querySelector('#themeToggle i').classList.toggle('fa-moon', isLight);
+      document.querySelector('#themeToggle i').classList.toggle('fa-sun', !isLight);
+    });
+
+    // QR Code Generator
+    document.getElementById('qrBtn').addEventListener('click', () => {
+      document.getElementById('qrModal').classList.remove('hidden');
+      document.getElementById('qrcode').innerHTML = ""; // clear
+      new QRCode(document.getElementById('qrcode'), {
+        text: MY_URL,
+        width: 220,
+        height: 220,
+        colorDark: "#ffffff",
+        colorLight: "#00000000",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    });
+
+    // Click Sound
+    function playSound() {
+      const s = document.getElementById('clickSound');
+      s.currentTime = 0;
+      s.play().catch(() => {});
+    }
+
+    // Init Tilt
+    VanillaTilt.init(document.querySelectorAll(".tilt"), { max: 12, speed: 400, glare: true, "max-glare": 0.4 });
   </script>
 </body>
 </html>
