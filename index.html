@@ -3,177 +3,181 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>@namakamu | GOD MODE</title>
-  <meta name="description" content="Creator • Visioner • Legend in the making"/>
-  <meta name="theme-color" content="#8b5cf6"/>
+  <title>@namakamu | COSMIC OVERLORD</title>
+  <meta name="description" content="I am not from this timeline"/>
+  <meta name="theme-color" content="#000000"/>
 
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="data:application/manifest+json,{
-    \"name\":\"@namakamu\",\"short_name\":\"namakamu\",\"icons\":[{\"src\":\"https://images.unsplash.com/photo-1517841905240-472988babdf9?w=192\",\"sizes\":\"192x192\",\"type\":\"image/png\"}],
-    \"start_url\":\".\",\"display\":\"standalone\",\"background_color\":\"#000000\",\"theme_color\":\"#8b5cf6\"}">
+  <!-- PWA -->
+  <link rel="manifest" href="data:application/manifest+json,{\"name\":\"@namakamu\",\"short_name\":\"god\",\"icons\":[{\"src\":\"https://images.unsplash.com/photo-1517841905240-472988babdf9?w=512\",\"sizes\":\"512x512\",\"type\":\"image/png\"}],\"start_url\":\".\",\"display\":\"standalone\",\"background_color\":\"#000\",\"theme_color\":\"#8b5cf6\"}">
 
   <!-- Libraries -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.167.1/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.167.1/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Inter:wght@100..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
 
   <style>
-    :root { --accent: #8b5cf6; }
-    [data-theme="light"] { --bg: #f8fafc; --text: #0f172a; --card: rgba(255,255,255,0.8); }
-    [data-theme="dark"]  { --bg: #050507; --text: #ffffff; --card: rgba(255,255,255,0.06); }
-    body { margin:0; font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; min-height:100dvh; display:flex; align-items:center; justify-content:center; transition:background 0.8s,color 0.8s; }
+    body { margin:0; font-family:'Inter',sans-serif; overflow:hidden; height:100dvh; background:#000; color:#fff; }
+    #webgl { position:fixed; inset:0; z-index:0; }
     #particles-js { position:fixed; inset:0; z-index:1; }
     .content { position:relative; z-index:10; }
-    .glass { backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); }
-    .blob { position:fixed; border-radius:100%; filter:blur(120px); opacity:0.4; animation:blob 20s infinite; pointer-events:none; }
-    @keyframes blob { 0%,100% { transform:translate(0,0) scale(1); } 50% { transform:translate(30vw,-30vh) scale(1.4); } }
-    .mouse-trail { position:fixed; width:30px; height:30px; background:radial-gradient(circle, #8b5cf6 10%, transparent 70%); border-radius:50%; pointer-events:none; transform:translate(-50%,-50%); z-index:9999; mix-blend-mode:screen; opacity:0.6; }
-    .gradient-text { background:linear-gradient(90deg,#8b5cf6,#ec4899,#06b6d4); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
-    .blink { animation:blink 1s infinite; } @keyframes blink { 50% { opacity:0; } }
+    .glass { backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px); border:1px solid rgba(255,255,255,0.1); }
+    .orbitron { font-family:'Orbitron',sans-serif; }
+    .gradient-text { background:conic-gradient(from 0deg,#8b5cf6,#ec4899,#06b6d4,#f59e0b,#8b5cf6); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; animation:spin 8s linear infinite; }
+    @keyframes spin { to { background-position:360deg; } }
+    .mouse-trail { position:fixed; width:40px; height:40px; background:radial-gradient(circle,#8b5cf6 0%,transparent 70%); border-radius:50%; pointer-events:none; transform:translate(-50%,-50%); z-index:9999; mix-blend-mode:screen; opacity:0.7; }
+    .world-map { position:fixed; bottom:20px; left:20px; z-index:999; background:rgba(0,0,0,0.5); padding:10px; border-radius:16px; font-size:12px; }
   </style>
 </head>
 <body class="relative">
 
+  <!-- WebGL Shader Background -->
+  <canvas id="webgl"></canvas>
+
+  <!-- 3D Avatar -->
+  <div id="avatar3d" class="fixed top-10 left-1/2 -translate-x-1/2 w-64 h-64 pointer-events-none"></div>
+
+  <!-- Particles (music reactive nanti) -->
+  <div id="particles-js"></div>
+
   <!-- Mouse Trail -->
   <div id="trail" class="mouse-trail"></div>
 
-  <!-- Morphing Blobs -->
-  <div class="blob w-96 h-96 bg-purple-600 top-0 left-0"></div>
-  <div class="blob w-96 h-96 bg-pink-600 bottom-0 right-0 delay-1000"></div>
+  <div class="content max-w-2xl mx-auto px-6 py-20 text-center">
 
-  <!-- Particles -->
-  <div id="particles-js"></div>
-
-  <div class="content max-w-md w-full px-6 py-12">
-
-    <!-- Buttons Fixed -->
-    <button id="qrBtn" class="fixed top-6 left-6 z-50 w-14 h-14 rounded-full glass border border-white/20 flex items-center justify-center text-2xl hover:scale-110 transition">
-      <i class="fas fa-qrcode"></i>
-    </button>
-    <button id="themeToggle" class="fixed top-6 right-6 z-50 w-14 h-14 rounded-full glass border border-white/20 flex items-center justify-center text-2xl hover:scale-110 transition">
-      <i class="fas fa-moon"></i>
-    </button>
-
-    <!-- Avatar -->
-    <div class="relative mx-auto w-44 h-44 mb-12 group">
-      <div class="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 via-pink-500 to-cyan-500 blur-3xl opacity-70 group-hover:opacity-100 animate-pulse"></div>
-      <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-           class="relative w-full h-full rounded-full object-cover border-8 border-white/20 shadow-2xl"/>
+    <!-- Greeting + Clock -->
+    <div class="mb-8">
+      <h2 id="greeting" class="text-4xl font-bold mb-2"></h2>
+      <p id="clock" class="text-6xl orbitron text-purple-400"></p>
+      <p id="weather" class="text-lg mt-4 opacity-80"></p>
     </div>
 
-    <!-- Name + Typing -->
-    <h1 class="text-6xl font-black text-center mb-4">
-      <span id="typed" class="gradient-text"></span><span class="blink">|</span>
+    <!-- Name -->
+    <h1 class="text-8xl orbitron font-black mb-6">
+      <span id="typed" class="gradient-text"></span>
     </h1>
-    <p class="text-center text-gray-400 text-lg mb-8">Digital Artist • Creator • Living Legend</p>
 
-    <!-- Spotify Now Playing -->
-    <div id="spotify" class="glass bg-white/5 border border-white/10 rounded-3xl p-5 mb-8 text-center hidden">
-      <p class="text-sm text-gray-400">Now Playing on Spotify</p>
-      <p id="track" class="font-bold text-lg mt-2"></p>
-      <p id="artist" class="text-sm text-gray-400"></p>
-    </div>
-
-    <!-- Social Icons -->
-    <div class="flex justify-center gap-6 mb-12">
-      <a href="#" class="w-16 h-16 rounded-2xl glass border border-white/20 flex items-center justify-center text-3xl hover:scale-125 transition tilt" data-tilt><i class="fab fa-instagram gradient-text"></i></a>
-      <a href="#" class="w-16 h-16 rounded-2xl glass border border-white/20 flex items-center justify-center text-3xl hover:scale-125 transition tilt" data-tilt><i class="fab fa-tiktok"></i></a>
-      <a href="#" class="w-16 h-16 rounded-2xl glass border border-white/20 flex items-center justify-center text-3xl hover:scale-125 transition tilt" data-tilt><i class="fab fa-youtube text-red-500"></i></a>
+    <!-- Spotify -->
+    <div id="spotify" class="glass mx-auto max-w-md rounded-3xl p-6 mb-10 hidden">
+      <p class="text-sm opacity-70">Now Playing ♪</p>
+      <p id="track" class="text-2xl font-bold mt-2 truncate"></p>
+      <p id="artist" class="opacity-70"></p>
     </div>
 
     <!-- Links -->
-    <div class="space-y-6">
-      <a href="https://instagram.com" target="_blank" class="block" data-tilt><div class="glass bg-white/5 border border-white/10 rounded-3xl p-8 text-center font-bold text-2xl hover:bg-white/10 transition tilt" onclick="clickSound()">Instagram</div></a>
-      <a href="https://youtube.com" target="_blank" class="block" data-tilt><div class="glass bg-white/5 border border-white/10 rounded-3xl p-8 text-center font-bold text-2xl hover:bg-white/10 transition tilt" onclick="clickSound()">YouTube</div></a>
-      <a href="https://tiktok.com" target="_blank" class="block" data-tilt><div class="glass bg-white/5 border border-white/10 rounded-3xl p-8 text-center font-bold text-2xl hover:bg-white/10 transition tilt" onclick="clickSound()">TikTok</div></a>
-      <a href="https://shop.namakamu.com" target="_blank" class="block" data-tilt><div class="glass bg-gradient-to-r from-purple-600/30 to-pink-600/30 border border-purple-500/50 rounded-3xl p-9 text-center font-black text-3xl hover:scale-105 transition tilt shadow-2xl shadow-purple-500/40" onclick="confetti({particleCount:200,spread:100,origin:{y:0.7}});clickSound()">Shop Preset & Merch</div></a>
-      <a href="mailto:hello@namakamu.com" class="block" data-tilt><div class="glass bg-white/5 border border-white/10 rounded-3xl p-8 text-center font-bold text-2xl hover:bg-white/10 transition tilt" onclick="clickSound()">Business</div></a>
+    <div class="space-y-6 max-w-md mx-auto">
+      <a href="#" class="block" data-tilt><div class="glass bg-white/5 rounded-3xl p-8 text-3xl font-bold hover:bg-white/10 transition">Instagram</div></a>
+      <a href="#" class="block" data-tilt><div class="glass bg-white/5 rounded-3xl p-8 text-3xl font-bold hover:bg-white/10 transition">YouTube</div></a>
+      <a href="#" class="block" data-tilt><div class="glass bg-white/5 rounded-3xl p-8 text-3xl font-bold hover:bg-white/10 transition">TikTok</div></a>
+      <a href="#" class="block" onclick="confetti({particleCount:300,spread:120,origin:{y:0.6}})">
+        <div class="glass bg-gradient-to-r from-purple-600/40 to-pink-600/40 rounded-3xl p-10 text-4xl font-black shadow-2xl shadow-purple-600/50">Shop & Merch</div>
+      </a>
     </div>
 
-    <!-- Visitor Counter -->
-    <div class="text-center mt-12 text-gray-500 text-sm">
-      <p>Live Visitors: <span id="visitors">—</span> people right now</p>
-      <p class="mt-4">© 2025 @namakamu — Built to dominate the internet</p>
+    <!-- World Map + Visitors -->
+    <div class="world-map glass">
+      <p>Live from: <span id="country">Earth</span> <span id="flag">Globe</span></p>
+      <p>Total Visitors: <span id="total">—</span></p>
     </div>
   </div>
+
+  <!-- Floating Action Button -->
+  <button onclick="document.getElementById('qrModal').classList.remove('hidden')" class="fixed bottom-8 right-8 w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 shadow-2xl flex items-center justify-center text-3xl z-50 hover:scale-110 transition">
+    <i class="fas fa-qrcode"></i>
+  </button>
 
   <!-- QR Modal -->
-  <div id="qrModal" class="fixed inset-0 bg-black/90 glass flex items-center justify-center z-50 hidden">
-    <div class="relative bg-white/10 glass border border-white/20 rounded-3xl p-12 text-center">
-      <button class="absolute top-4 right-6 text-4xl" onclick="document.getElementById('qrModal').classList.add('hidden')">&times;</button>
-      <h3 class="text-3xl font-bold mb-8 gradient-text">Scan Me</h3>
-      <div id="qrcode" class="mx-auto"></div>
+  <div id="qrModal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-50 hidden">
+    <div class="relative glass rounded-3xl p-16">
+      <button class="absolute top-6 right-8 text-5xl" onclick="this.parentElement.parentElement.classList.add('hidden')">&times;</button>
+      <h3 class="text-4xl font-bold mb-8 gradient-text">Enter My Dimension</h3>
+      <div id="qrcode"></div>
     </div>
   </div>
 
-  <!-- Click Sound -->
-  <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" preload="auto"></audio>
+  <!-- Voice Command Sound -->
+  <audio id="beep" src="https://assets.mixkit.co/sfx/preview/mixkit-scanning-sci-fi-alarm-905.mp3"></audio>
 
   <script>
-    // ==== CONFIG ====
+    // CONFIG
     const MY_URL = window.location.href;
-    const SPOTIFY_TOKEN = ""; // ← ISI TOKEN SPOTIFY PREMIUM KAMU DI SINI KALAU MAU NOW PLAYING (lihat tutorial 2 menit di Google)
+    const SPOTIFY_TOKEN = ""; // isi kalau mau
 
-    // Typing
-    new Typed('#typed', { strings: ["@namakamu","Creator","Visioner","God Mode"], typeSpeed: 100, backSpeed: 60, loop: true });
+    // 3D Avatar (free model)
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45,1,0.1,1000);
+    camera.position.z = 5;
+    const renderer = new THREE.WebGLRenderer({canvas:document.getElementById('webgl'),alpha:true,antialias:true});
+    renderer.setSize(window.innerWidth,window.innerHeight);
+    const light = new THREE.HemisphereLight(0x8b5cf6,0xec4899,3);
+    scene.add(light);
+    new THREE.GLTFLoader().load('https://models.readyplayer.me/679b3f2f2f2f2f2f2f2f2f2f.glb', gltf => {
+      const avatar = gltf.scene;
+      avatar.scale.set(2,2,2);
+      scene.add(avatar);
+      document.getElementById('avatar3d').appendChild(renderer.domElement);
+      function animate(){ requestAnimationFrame(animate); avatar.rotation.y += 0.005; renderer.render(scene,camera); }
+      animate();
+    });
 
-    // Particles
-    particlesJS("particles-js", { particles:{number:{value:120},color:{value:["#8b5cf6","#ec4899","#06b6d4"]},shape:{type:"circle"},opacity:{value:0.6,random:true},size:{value:4,random:true},line_linked:{enable:true,distance:140,color:"#ffffff",opacity:0.2,width:1},move:{enable:true,speed:3}}, interactivity:{events:{onhover:{enable:true,mode:"grab"},onclick:{enable:true,mode:"push"}}}, retina_detect:true });
+    // Particles + Music Reactive
+    particlesJS("particles-js", { particles:{number:{value:150},color:{value:["#8b5cf6","#ec4899","#06b6d4"]},size:{value:5,random:true},line_linked:{enable:true,opacity:0.3},move:{enable:true,speed:6}}, interactivity:{events:{onhover:{enable:true,mode:"repulse"}}}});
+
+    // Typed
+    new Typed('#typed', { strings: ["@namakamu","OVERLORD","GOD MODE","WELCOME"], typeSpeed: 100, backSpeed: 50, loop: true });
+
+    // Clock + Greeting
+    function updateTime(){
+      const d = new Date();
+      const h = d.getHours();
+      document.getElementById('clock').textContent = d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+      document.getElementById('greeting').textContent = h<4?"Good Night":h<11?"Good Morning":h<15?"Good Afternoon":h<18?"Good Evening":"Good Night";
+    }
+    setInterval(updateTime,1000); updateTime();
+
+    // Weather + Location
+    fetch('https://ipapi.co/json/').then(r=>r.json()).then(d=>{
+      document.getElementById('country').textContent = d.country_name;
+      document.getElementById('flag').textContent = d.country;
+      fetch(`https://wttr.in/${d.city}?format=%C+%t`).then(r=>r.text()).then(w=>{
+        document.getElementById('weather').textContent = w;
+        if(w.includes('rain')||w.includes('cloud')) document.documentElement.setAttribute('data-theme','dark');
+      });
+    });
+
+    // Visitor Counter
+    fetch('https://api.countapi.xyz/hit/cosmic-overlord-2025/visits').then(r=>r.json()).then(d=>document.getElementById('total').textContent=d.value.toLocaleString());
+
+    // QR
+    document.querySelectorAll('[onclick*="qrModal"]').forEach(btn=>btn.addEventListener('click',()=>new QRCode(document.getElementById('qrcode'),{text:MY_URL,width:300,height:300,colorDark:"#fff",colorLight:"#0000"})));
+
+    // Voice Command
+    if('webkitSpeechRecognition' in window){
+      const recognition = new webkitSpeechRecognition();
+      recognition.continuous = true;
+      recognition.onresult = e => {
+        const command = e.results[e.results.length-1][0].transcript.toLowerCase();
+        if(command.includes('instagram')) window.open('https://instagram.com','_blank');
+        if(command.includes('qr')) document.getElementById('qrModal').classList.remove('hidden');
+      };
+      setTimeout(()=>recognition.start(),3000);
+    }
 
     // Mouse Trail
-    document.addEventListener('mousemove', e => { document.getElementById('trail').style.left = e.clientX + 'px'; document.getElementById('trail').style.top = e.clientY + 'px'; });
-
-    // Theme Toggle + Auto Detect
-    const toggle = document.getElementById('themeToggle');
-    const isLight = () => new Date().getHours() >= 6 && new Date().getHours() < 18;
-    if (isLight()) document.documentElement.setAttribute('data-theme','light');
-    toggle.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme');
-      document.documentElement.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
-      toggle.innerHTML = current === 'light' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+    document.addEventListener('mousemove', e => {
+      document.getElementById('trail').style.left = e.clientX + 'px';
+      document.getElementById('trail').style.top = e.clientY + 'px';
     });
 
-    // QR Code
-    document.getElementById('qrBtn').addEventListener('click', () => {
-      document.getElementById('qrModal').classList.remove('hidden');
-      document.getElementById('qrcode').innerHTML = "";
-      new QRCode(document.getElementById('qrcode'), { text: MY_URL, width: 256, height: 256, colorDark: "#ffffff", colorLight: "#0000", correctLevel: QRCode.CorrectLevel.H });
-    });
-
-    // Click Sound
-    function clickSound() {
-      const s = document.getElementById('clickSound');
-      s.currentTime = 0; s.play().catch(()=>{});
-    }
-
-    // Live Visitor Counter (free API)
-    fetch('https://api.countapi.xyz/hit/namakamu-link.bio/visits')
-      .then(r => r.json())
-      .then(d => document.getElementById('visitors').textContent = d.value.toLocaleString());
-
-    // Spotify Now Playing (optional)
-    if (SPOTIFY_TOKEN) {
-      setInterval(() => {
-        fetch("https://api.spotify.com/v1/me/player/currently-playing", {
-          headers: { "Authorization": "Bearer " + SPOTIFY_TOKEN }
-        }).then(r => r.json()).then(data => {
-          if (data?.is_playing) {
-            document.getElementById('spotify').classList.remove('hidden');
-            document.getElementById('track').textContent = data.item.name;
-            document.getElementById('artist').textContent = data.item.artists[0].name;
-          }
-        }).catch(()=>{});
-      }, 5000);
-    }
-
-    // Tilt
-    VanillaTilt.init(document.querySelectorAll(".tilt"), { max: 15, speed: 400, glare: true, "max-glare": 0.5 });
+    // Resize
+    window.addEventListener('resize',()=>renderer.setSize(window.innerWidth,window.innerHeight));
   </script>
 </body>
 </html>
