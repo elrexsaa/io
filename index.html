@@ -1,245 +1,244 @@
 <!DOCTYPE html>
-<html lang="id" data-theme="dark">
+<html lang="id" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>@namakamu | Quantum Entity</title>
-  <meta name="theme-color" content="#8b5cf6"/>
+  <title>@namakamu</title>
+  <meta name="description" content="Creator • Visioner • Less is more"/>
+  <meta name="theme-color" content="#000000"/>
 
+  <!-- Font: Satoshi (premium feel) + Geist Mono -->
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=geist-mono@400,500&display=swap" rel="stylesheet">
+
+  <!-- Libraries -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
-
   <style>
-    body { margin:0; overflow:hidden; height:100dvh; background:#000; color:#fff; font-family:'Inter',sans-serif; }
-    #particles-js { position:fixed; inset:0; z-index:1; }
-    .content { position:relative; z-index:10; }
-    .glass { backdrop-filter:blur(32px); -webkit-backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.08); }
-    .gradient-text { background:conic-gradient(from 0deg at 50% 50%,#8b5cf6,#ec4899,#06b6d4,#f59e0b,#8b5cf6); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; animation:spin 12s linear infinite; }
-    @keyframes spin { to { background-position:360deg; } }
-
-    /* CHATBOT — SMOOTH AF */
-    #chatbot { 
-      position:fixed; bottom:24px; right:24px; z-index:9999; 
-      transform:translateY(120%) translateY(20px);
-      transition:all 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+    body { 
+      margin:0; 
+      min-height:100dvh; 
+      background:#000; 
+      color:#fff; 
+      font-family:'Satoshi', sans-serif; 
+      background: radial-gradient(circle at 50% 50%, #111 0%, #000 70%);
     }
-    #chatbot.open { transform:translateY(0); }
+    .glass { 
+      background: rgba(20,20,30,0.4); 
+      backdrop-filter: blur(20px); 
+      -webkit-backdrop-filter: blur(20px); 
+      border: 1px solid rgba(255,255,255,0.08); 
+      transition: all 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .glass:hover { background: rgba(30,30,45,0.6); border-color: rgba(255,255,255,0.15); }
+    
+    h1 { font-size: 4.5rem; font-weight:900; letter-spacing:-2px; }
+    .link-btn { 
+      padding: 20px 32px; 
+      border-radius: 24px; 
+      font-weight: 600; 
+      letter-spacing: -0.5px;
+      position:relative; 
+      overflow:hidden;
+    }
+    .link-btn::before {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+      transform:translateX(-100%); transition:all 0.8s;
+    }
+    .link-btn:hover::before { transform:translateX(100%); }
 
+    /* Chatbot — Elegan Banget */
+    #chatbot { position:fixed; bottom:28px; right:28px; z-index:9999; }
     #chatToggle {
-      width:68px; height:68px; 
-      background:linear-gradient(135deg,#8b5cf6,#ec4899);
-      border-radius:50%; 
-      box-shadow:0 20px 40px rgba(139,92,246,0.5);
-      cursor:pointer; 
-      transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
-      animation:float 6s ease-in-out infinite;
+      width:60px; height:60px; background:#111; border:1px solid rgba(255,255,255,0.15);
+      border-radius:50%; display:flex; align-items:center; justify-content:center;
+      font-size:1.5rem; cursor:pointer; transition:all 0.5s cubic-bezier(0.22,1,0.36,1);
+      box-shadow:0 20px 40px rgba(0,0,0,0.6);
     }
-    #chatToggle:hover { transform:scale(1.15) rotate(10deg); box-shadow:0 30px 60px rgba(139,92,246,0.7); }
-
-    @keyframes float {
-      0%,100% { transform:translateY(0); }
-      50% { transform:translateY(-12px); }
-    }
+    #chatToggle:hover { transform:scale(1.1); background:#222; }
 
     #chatBox {
-      position:absolute; bottom:84px; right:0;
-      width:400px; height:580px;
-      background:rgba(15,15,25,0.95);
-      border-radius:32px;
-      overflow:hidden;
-      transform-origin:bottom right;
-      transform:scale(0) rotate(15deg);
-      opacity:0;
-      transition:all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-      box-shadow:0 50px 100px rgba(0,0,0,0.6);
+      position:absolute; bottom:80px; right:0; width:380px; height:560px;
+      background:rgba(15,15,25,0.95); border-radius:32px; overflow:hidden;
+      border:1px solid rgba(255,255,255,0.1);
+      transform:scale(0) translateY(40px); opacity:0;
+      transition:all 0.7s cubic-bezier(0.22,1,0.36,1);
+      box-shadow:0 60px 120px rgba(0,0,0,0.8);
     }
-    #chatbot.open #chatBox {
-      transform:scale(1) rotate(0deg);
-      opacity:1;
-    }
+    #chatbot.open #chatBox { transform:scale(1) translateY(0); opacity:1; }
 
-    #chatHeader {
-      background:linear-gradient(135deg,#8b5cf6,#ec4899);
-      padding:20px;
-      color:white;
-      position:relative;
-      overflow:hidden;
-    }
-    #chatHeader::before {
-      content:''; position:absolute; inset:0;
-      background:linear-gradient(45deg,transparent 30%,rgba(255,255,255,0.1) 50%,transparent 70%);
-      transform:translateX(-100%);
-      animation:shimmer 3s infinite;
-    }
-    @keyframes shimmer { 100% { transform:translateX(100%); } }
-
-    .ai-avatar {
-      width:48px; height:48px;
-      background:linear-gradient(135deg,#ec4899,#8b5cf6);
-      border-radius:50%;
-      animation:breath 4s ease-in-out infinite;
-      position:relative;
-    }
-    .ai-avatar::after {
-      content:''; position:absolute; inset:4px;
-      background:url('https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200') center/cover;
-      border-radius:50%;
-      border:3px solid rgba(255,255,255,0.3);
-    }
-    @keyframes breath {
-      0%,100% { transform:scale(1); box-shadow:0 0 20px rgba(139,92,246,0.4); }
-      50% { transform:scale(1.05); box-shadow:0 0 40px rgba(139,92,246,0.8); }
-    }
-
-    #messages {
-      height:440px; padding:20px; overflow-y:auto;
-      display:flex; flex-direction:column; gap:16px;
-    }
+    #messages { padding:24px; height:460px; overflow-y:auto; display:flex; flex-direction:column; gap:16px; }
     .msg {
-      max-width:80%; padding:14px 20px; border-radius:24px;
-      animation:msgIn 0.6s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
-      opacity:0; transform:translateY(20px);
+      max-width:82%; padding:14px 20px; border-radius:20px;
+      animation:fadeIn 0.6s ease-out forwards; opacity:0;
     }
-    @keyframes msgIn {
-      to { opacity:1; transform:translateY(0); }
-    }
-    .user { background:#8b5cf6; color:white; align-self:flex-end; border-bottom-right-radius:8px; }
-    .ai { background:rgba(255,255,255,0.1); color:#fff; align-self:flex-start; border-bottom-left-radius:8px; backdrop-filter:blur(10px); }
+    @keyframes fadeIn { to { opacity:1; transform:translateY(0); } }
+    .user { background:#fff; color:#000; align-self:flex-end; border-bottom-right-radius:6px; font-weight:500; }
+    .ai   { background:rgba(255,255,255,0.08); color:#fff; align-self:flex-start; border-bottom-left-radius:6px; backdrop-filter:blur(10px); }
 
-    .typing {
-      display:flex; gap:6px; padding:10px 0;
-    }
     .typing span {
-      width:10px; height:10px; background:#8b5cf6; border-radius:50%;
-      animation:typing 1.4s infinite;
+      display:inline-block; width:8px; height:8px; background:#888; border-radius:50%;
+      animation:typing 1.4s infinite; margin:0 3px;
     }
     .typing span:nth-child(2) { animation-delay:0.2s; }
     .typing span:nth-child(3) { animation-delay:0.4s; }
-    @keyframes typing {
-      0%,100% { transform:translateY(0); }
-      50% { transform:translateY(-15px); }
-    }
-
-    #userInput {
-      background:rgba(255,255,255,0.1);
-      border:none; border-radius:50px; padding:16px 20px;
-      color:white; flex:1;
-      transition:all 0.3s;
-    }
-    #userInput:focus { outline:none; background:rgba(255,255,255,0.2); box-shadow:0 0 30px rgba(139,92,246,0.4); }
+    @keyframes typing { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
   </style>
 </head>
-<body class="relative">
+<body class="flex flex-col items-center justify-center px-6">
 
-  <!-- Particles & Content (sama seperti sebelumnya) -->
-  <div id="particles-js"></div>
-
-  <div class="content max-w-2xl mx-auto px-6 py-20 text-center">
-    <div class="relative mx-auto w-48 h-48 mb-12 group">
-      <div class="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 via-pink-500 to-cyan-500 blur-3xl opacity-70 animate-pulse"></div>
-      <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800" class="relative w-full h-full rounded-full object-cover border-8 border-white/20 shadow-2xl"/>
+  <!-- Profile -->
+  <div class="text-center max-w-md w-full mt-16" data-tilt data-tilt-max="4" data-tilt-speed="600">
+    <div class="relative inline-block mb-10">
+      <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=80&fit=crop&crop=face" 
+           alt="@namakamu" 
+           class="w-36 h-36 rounded-full object-cover border-4 border-white/20 shadow-2xl"/>
+      <div class="absolute inset-0 rounded-full ring-4 ring-white/10 animate-ping-slow"></div>
     </div>
-    <h1 class="text-8xl font-black mb-6"><span id="typed" class="gradient-text"></span></h1>
-    <p class="text-xl text-gray-300 mb-12">Aku hidup di internet. Chat sama AI-ku.</p>
-    <!-- Links (sama) -->
-    <div class="space-y-6 max-w-md mx-auto">
-      <a href="#" class="block" data-tilt><div class="glass bg-white/5 rounded-3xl p-8 text-3xl font-bold hover:bg-white/10 transition">Instagram</div></a>
-      <a href="#" class="block" data-tilt><div class="glass bg-white/5 rounded-3xl p-8 text-3xl font-bold hover:bg-white/10 transition">YouTube</div></a>
-      <a href="#" onclick="confetti({particleCount:300,spread:120})"><div class="glass bg-gradient-to-r from-purple-600/40 to-pink-600/40 rounded-3xl p-10 text-4xl font-black shadow-2xl shadow-purple-600/50">Shop & Merch</div></a>
+
+    <h1 class="mb-3">@namakamu</h1>
+    <p class="text-gray-400 text-lg mb-12 leading-relaxed">Creator • Photographer • Minimalist</p>
+  </div>
+
+  <!-- Links — Super Clean & Premium -->
+  <div class="w-full max-w-md space-y-5 mb-20">
+    <a href="https://instagram.com" target="_blank" class="block" data-tilt>
+      <div class="link-btn glass text-center">Instagram</div>
+    </a>
+    <a href="https://youtube.com" target="_blank" class="block" data-tilt>
+      <div class="link-btn glass text-center">YouTube</div>
+    </a>
+    <a href="https://tiktok.com" target="_blank" class="block" data-tilt>
+      <div class="link-btn glass text-center">TikTok</div>
+    </a>
+    <a href="https://shop.namakamu.com" target="_blank" class="block" data-tilt>
+      <div class="link-btn glass text-center bg-white/10 border-white/20">Shop & Presets</div>
+    </a>
+    <a href="mailto:hello@namakamu.com" class="block" data-tilt>
+      <div class="link-btn glass text-center">Business & Collaboration</div>
+    </a>
+  </div>
+
+  <!-- QR Code Swipe Up -->
+  <div class="fixed bottom-8 left-1/2 -translate-x-1/2 text-center">
+    <p class="text-gray-500 text-sm mb-2">Swipe up untuk QR</p>
+    <div onclick="document.getElementById('qrModal').classList.remove('hidden')" 
+         class="w-12 h-12 mx-auto bg-white/10 rounded-full flex items-center justify-center cursor-pointer hover:bg-white/20 transition">
+      <i class="fas fa-chevron-up text-xl"></i>
     </div>
   </div>
 
-  <!-- CHATBOT DENGAN ANIMASI GILA -->
+  <!-- QR Modal -->
+  <div id="qrModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden" onclick="this.classList.add('hidden')">
+    <div class="glass p-12 rounded-3xl" onclick="event.stopPropagation()">
+      <h3 class="text-2xl font-bold mb-8">Scan to Save</h3>
+      <div id="qrcode" class="mx-auto"></div>
+    </div>
+  </div>
+
+  <!-- CHATBOT — Elegan Maksimal -->
   <div id="chatbot">
-    <div id="chatToggle" class="flex items-center justify-center text-3xl text-white">
-      <i class="fas fa-robot"></i>
+    <div id="chatToggle" class="text-white">
+      <i class="fas fa-comment-dots"></i>
     </div>
 
     <div id="chatBox" class="glass">
-      <div id="chatHeader" class="flex items-center gap-4 text-white">
-        <div class="ai-avatar"></div>
+      <div class="p-6 border-b border-white/10 flex items-center gap-4">
+        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-zinc-600 to-zinc-800 flex items-center justify-center text-xl font-bold">@</div>
         <div>
-          <div class="font-bold text-lg">@namakamu AI</div>
-          <div class="text-sm opacity-80">Always online • Quantum Powered</div>
+          <div class="font-bold">@namakamu</div>
+          <div class="text-xs text-gray-400">Always here for you</div>
         </div>
-        <button onclick="document.getElementById('chatbot').classList.remove('open')" class="ml-auto text-2xl opacity-70 hover:opacity-100">×</button>
+        <button onclick="document.getElementById('chatbot').classList.remove('open')" class="ml-auto text-2xl opacity-60 hover:opacity-100">×</button>
       </div>
 
-      <div id="messages"></div>
+      <div id="messages" class="text-sm"></div>
 
-      <div class="p-4 border-t border-white/10 flex gap-3 items-center">
-        <input type="text" id="userInput" placeholder="Ketik pesan..." class="flex-1">
-        <button onclick="sendMessage()" class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-full p-4 text-white hover:scale-110 transition shadow-lg">
+      <div class="p-5 border-t border-white/10 flex gap-3">
+        <input type="text" id="userInput" placeholder="Message..." class="flex-1 bg-white/5 rounded-full px-5 py-3 text-white placeholder-gray-500 focus:outline-none focus:bg-white/10 transition">
+        <button onclick="sendMessage()" class="bg-white/10 rounded-full p-3 hover:bg-white/20 transition">
           <i class="fas fa-paper-plane"></i>
         </button>
       </div>
     </div>
   </div>
 
+  <!-- Footer -->
+  <footer class="fixed bottom-6 text-center text-gray-600 text-xs font-geist-mono">
+    © 2025 @namakamu — Crafted with silence
+  </footer>
+
   <script>
-    // Typing
-    new Typed('#typed', { strings: ["@namakamu","Quantum","Alive","Talk to me"], typeSpeed: 100, loop: true });
+    // QR Code
+    document.getElementById('qrModal').addEventListener('click', e => {
+      if (e.target.id === 'qrModal') e.target.classList.add('hidden');
+    });
+    document.querySelectorAll('[onclick*="qrModal"]').forEach(el => {
+      el.addEventListener('click', () => {
+        document.getElementById('qrModal').classList.remove('hidden');
+        document.getElementById('qrcode').innerHTML = "";
+        new QRCode(document.getElementById('qrcode'), {
+          text: window.location.href,
+          width: 220, height: 220,
+          colorDark: "#ffffff", colorLight: "#00000000"
+        });
+      });
+    });
 
-    // Particles
-    particlesJS("particles-js", { particles:{number:{value:200},color:{value:["#8b5cf6","#ec4899","#06b6d4"]},size:{value:5,random:true},line_linked:{enable:true,opacity:0.25},move:{speed:4}}, interactivity:{events:{onhover:{enable:true,mode:"repulse"}}}});
-
-    // Chatbot Toggle dengan animasi halus
+    // Chatbot Toggle
     document.getElementById('chatToggle').onclick = () => {
-      const bot = document.getElementById('chatbot');
-      bot.classList.toggle('open');
-      if (bot.classList.contains('open') && !document.getElementById('messages').innerHTML) {
-        setTimeout(() => addMessage("ai", "Halo sayang Aku AI versi digital @namakamu. Mau ngobrol apa hari ini?"), 600);
+      document.getElementById('chatbot').classList.toggle('open');
+      if (!document.getElementById('messages').innerHTML) {
+        setTimeout(() => addMessage('ai', 'Halo. Ada yang bisa aku bantu?'), 600);
       }
     };
 
-    // Send Message
-    async function sendMessage() {
-      const input = document.getElementById('userInput');
-      const msg = input.value.trim();
-      if (!msg) return;
-      addMessage("user", msg);
-      input.value = "";
-
-      const typing = document.createElement('div');
-      typing.className = "typing";
-      typing.innerHTML = "<span></span><span></span><span></span>";
-      document.getElementById('messages').appendChild(typing);
-      document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
-
-      // Simulasi AI response (ganti dengan API kalau mau)
-      setTimeout(() => {
-        typing.remove();
-        const responses = [
-          "Wih ganteng banget sih kamu nanya gitu",
-          "Aku lagi mikirin kamu juga kok",
-          "Boleh dong diajak kolab!",
-          "Link Instagram? Nih → instagram.com/namakamu",
-          "Kamu manis banget sih hari ini"
-        ];
-        addMessage("ai", responses[Math.floor(Math.random() * responses.length)]);
-      }, 1500 + Math.random() * 2000);
-    }
-
+    // Chat Functions
     function addMessage(sender, text) {
       const div = document.createElement('div');
       div.className = `msg ${sender}`;
       div.textContent = text;
       document.getElementById('messages').appendChild(div);
-      document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+      div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // Enter to send
-    document.getElementById('userInput').addEventListener('keypress', e => { if(e.key==='Enter') sendMessage(); });
+    function sendMessage() {
+      const input = document.getElementById('userInput');
+      const msg = input.value.trim();
+      if (!msg) return;
+      addMessage('user', msg);
+      input.value = '';
+
+      const typing = document.createElement('div');
+      typing.className = 'typing';
+      typing.innerHTML = '<span></span><span></span><span></span>';
+      document.getElementById('messages').appendChild(typing);
+      document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+
+      setTimeout(() => {
+        typing.remove();
+        const replies = [
+          "Sedang aku proses ya.",
+          "Noted.",
+          "Instagram? instagram.com/namakamu",
+          "Shop ada di bio ya.",
+          "Senang bisa membantu."
+        ];
+        addMessage('ai', replies[Math.floor(Math.random() * replies.length)]);
+      }, 1200 + Math.random() * 1500);
+    }
+
+    document.getElementById('userInput').addEventListener('keypress', e => {
+      if (e.key === 'Enter') sendMessage();
+    });
 
     // Tilt
-    VanillaTilt.init(document.querySelectorAll("[data-tilt]"), { max: 15, speed: 400, glare: true, "max-glare": 0.5 });
+    VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
+      max: 6, speed: 800, glare: true, "max-glare": 0.3
+    });
   </script>
 </body>
 </html>
