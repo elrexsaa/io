@@ -4,208 +4,129 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>@namakamu</title>
-  <meta name="description" content="Creator • Visioner • Less is more"/>
+  <meta name="description" content="Creator • Less is more"/>
   <meta name="theme-color" content="#000000"/>
 
-  <!-- Font: Satoshi (premium feel) + Geist Mono -->
+  <!-- Font Premium -->
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400&display=swap" rel="stylesheet">
-  <link href="https://api.fontshare.com/v2/css?f[]=geist-mono@400,500&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=geist-mono@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
 
-  <!-- Libraries -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 
   <style>
-    body { 
-      margin:0; 
-      min-height:100dvh; 
-      background:#000; 
-      color:#fff; 
-      font-family:'Satoshi', sans-serif; 
-      background: radial-gradient(circle at 50% 50%, #111 0%, #000 70%);
-    }
-    .glass { 
-      background: rgba(20,20,30,0.4); 
-      backdrop-filter: blur(20px); 
-      -webkit-backdrop-filter: blur(20px); 
-      border: 1px solid rgba(255,255,255,0.08); 
-      transition: all 0.6s cubic-bezier(0.22,1,0.36,1);
-    }
-    .glass:hover { background: rgba(30,30,45,0.6); border-color: rgba(255,255,255,0.15); }
-    
-    h1 { font-size: 4.5rem; font-weight:900; letter-spacing:-2px; }
-    .link-btn { 
-      padding: 20px 32px; 
-      border-radius: 24px; 
-      font-weight: 600; 
-      letter-spacing: -0.5px;
-      position:relative; 
-      overflow:hidden;
-    }
-    .link-btn::before {
-      content:''; position:absolute; inset:0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
-      transform:translateX(-100%); transition:all 0.8s;
-    }
-    .link-btn:hover::before { transform:translateX(100%); }
+    body { margin:0; min-height:100dvh; background:#000; color:#fff; font-family:'Satoshi',sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; position:relative; overflow-x:hidden; }
+    .glass { background:rgba(20,20,30,0.45); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); border:1px solid rgba(255,255,255,0.09); transition:all 0.7s cubic-bezier(0.22,1,0.36,1); border-radius:24px; }
+    .glass:hover { background:rgba(30,30,45,0.65); border-color:rgba(255,255,255,0.18); }
+    h1 { font-size:4.5rem; font-weight:900; letter-spacing:-3px; }
+    .link { padding:20px 40px; font-weight:600; font-size:1.1rem; letter-spacing:-0.5px; text-align:center; }
 
-    /* Chatbot — Elegan Banget */
-    #chatbot { position:fixed; bottom:28px; right:28px; z-index:9999; }
-    #chatToggle {
-      width:60px; height:60px; background:#111; border:1px solid rgba(255,255,255,0.15);
-      border-radius:50%; display:flex; align-items:center; justify-content:center;
-      font-size:1.5rem; cursor:pointer; transition:all 0.5s cubic-bezier(0.22,1,0.36,1);
-      box-shadow:0 20px 40px rgba(0,0,0,0.6);
-    }
-    #chatToggle:hover { transform:scale(1.1); background:#222; }
+    /* QR Modal — Muncul otomatis pertama kali */
+    #qrModal { position:fixed; inset:0; background:rgba(0,0,0,0.92); backdrop-filter:blur(12px); z-index:9999; display:flex; align-items:center; justify-content:center; opacity:0; visibility:hidden; transition:all 0.8s cubic-bezier(0.22,1,0.36,1); }
+    #qrModal.show { opacity:1; visibility:visible; }
 
-    #chatBox {
-      position:absolute; bottom:80px; right:0; width:380px; height:560px;
-      background:rgba(15,15,25,0.95); border-radius:32px; overflow:hidden;
-      border:1px solid rgba(255,255,255,0.1);
-      transform:scale(0) translateY(40px); opacity:0;
-      transition:all 0.7s cubic-bezier(0.22,1,0.36,1);
-      box-shadow:0 60px 120px rgba(0,0,0,0.8);
-    }
-    #chatbot.open #chatBox { transform:scale(1) translateY(0); opacity:1; }
+    /* Chatbot Elegan */
+    #chatbot { position:fixed; bottom:32px; right:32px; z-index:9998; }
+    #chatToggle { width:64px; height:64px; background:#111; border:1px solid rgba(255,255,255,0.15); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.6rem; cursor:pointer; transition:all 0.5s; box-shadow:0 20px 40px rgba(0,0,0,0.7); }
+    #chatToggle:hover { background:#222; transform:scale(1.1); }
 
-    #messages { padding:24px; height:460px; overflow-y:auto; display:flex; flex-direction:column; gap:16px; }
-    .msg {
-      max-width:82%; padding:14px 20px; border-radius:20px;
-      animation:fadeIn 0.6s ease-out forwards; opacity:0;
-    }
+    #chatBox { position:absolute; bottom:84px; right:0; width:400px; height:600px; background:rgba(10,10,20,0.98); border-radius:32px; border:1px solid rgba(255,255,255,0.12); overflow:hidden; transform:scale(0.9); opacity:0; transition:all 0.7s cubic-bezier(0.22,1,0.36,1); box-shadow:0 60px 120px rgba(0,0,0,0.8); }
+    #chatbot.open #chatBox { transform:scale(1); opacity:1; }
+
+    #messages { padding:24px; height:480px; overflow-y:auto; display:flex; flex-direction:column; gap:16px; }
+    .msg { max-width:80%; padding:14px 20px; border-radius:20px; opacity:0; animation:fadeIn 0.6s forwards; }
     @keyframes fadeIn { to { opacity:1; transform:translateY(0); } }
     .user { background:#fff; color:#000; align-self:flex-end; border-bottom-right-radius:6px; font-weight:500; }
-    .ai   { background:rgba(255,255,255,0.08); color:#fff; align-self:flex-start; border-bottom-left-radius:6px; backdrop-filter:blur(10px); }
-
-    .typing span {
-      display:inline-block; width:8px; height:8px; background:#888; border-radius:50%;
-      animation:typing 1.4s infinite; margin:0 3px;
-    }
-    .typing span:nth-child(2) { animation-delay:0.2s; }
-    .typing span:nth-child(3) { animation-delay:0.4s; }
-    @keyframes typing { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
+    .ai { background:rgba(255,255,255,0.08); color:#fff; align-self:flex-start; border-bottom-left-radius:6px; }
   </style>
 </head>
-<body class="flex flex-col items-center justify-center px-6">
+<body>
 
-  <!-- Profile -->
-  <div class="text-center max-w-md w-full mt-16" data-tilt data-tilt-max="4" data-tilt-speed="600">
-    <div class="relative inline-block mb-10">
-      <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=80&fit=crop&crop=face" 
-           alt="@namakamu" 
-           class="w-36 h-36 rounded-full object-cover border-4 border-white/20 shadow-2xl"/>
-      <div class="absolute inset-0 rounded-full ring-4 ring-white/10 animate-ping-slow"></div>
+  <!-- QR Modal — Muncul otomatis pertama kali -->
+  <div id="qrModal" class="show">
+    <div class="glass p-12 text-center" onclick="event.stopPropagation()">
+      <h3 class="text-2xl font-bold mb-6">Save Contact</h3>
+      <div id="qrcode" class="mx-auto mb-6"></div>
+      <button onclick="document.getElementById('qrModal').classList.remove('show')" 
+              class="px-10 py-4 bg-white/10 rounded-full hover:bg-white/20 transition text-sm font-medium">
+        Close
+      </button>
     </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="text-center max-w-md w-full z-10">
+    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800&q=80&fit=crop&crop=face" 
+         alt="@namakamu" 
+         class="w-36 h-36 rounded-full object-cover mx-auto mb-8 border-4 border-white/20 shadow-2xl"/>
 
     <h1 class="mb-3">@namakamu</h1>
-    <p class="text-gray-400 text-lg mb-12 leading-relaxed">Creator • Photographer • Minimalist</p>
-  </div>
+    <p class="text-gray-400 text-lg mb-12">Creator • Photographer • Minimalist</p>
 
-  <!-- Links — Super Clean & Premium -->
-  <div class="w-full max-w-md space-y-5 mb-20">
-    <a href="https://instagram.com" target="_blank" class="block" data-tilt>
-      <div class="link-btn glass text-center">Instagram</div>
-    </a>
-    <a href="https://youtube.com" target="_blank" class="block" data-tilt>
-      <div class="link-btn glass text-center">YouTube</div>
-    </a>
-    <a href="https://tiktok.com" target="_blank" class="block" data-tilt>
-      <div class="link-btn glass text-center">TikTok</div>
-    </a>
-    <a href="https://shop.namakamu.com" target="_blank" class="block" data-tilt>
-      <div class="link-btn glass text-center bg-white/10 border-white/20">Shop & Presets</div>
-    </a>
-    <a href="mailto:hello@namakamu.com" class="block" data-tilt>
-      <div class="link-btn glass text-center">Business & Collaboration</div>
-    </a>
-  </div>
-
-  <!-- QR Code Swipe Up -->
-  <div class="fixed bottom-8 left-1/2 -translate-x-1/2 text-center">
-    <p class="text-gray-500 text-sm mb-2">Swipe up untuk QR</p>
-    <div onclick="document.getElementById('qrModal').classList.remove('hidden')" 
-         class="w-12 h-12 mx-auto bg-white/10 rounded-full flex items-center justify-center cursor-pointer hover:bg-white/20 transition">
-      <i class="fas fa-chevron-up text-xl"></i>
+    <!-- Semua Link Seragam & Mudah Diubah -->
+    <div class="space-y-5">
+      <a href="https://instagram.com/namakamu" target="_blank" class="block" data-tilt><div class="link glass">Instagram</div></a>
+      <a href="https://youtube.com/@namakamu" target="_blank" class="block" data-tilt><div class="link glass">YouTube</div></a>
+      <a href="https://tiktok.com/@namakamu" target="_blank" class="block" data-tilt><div class="link glass">TikTok</div></a>
+      <a href="https://shop.namakamu.com" target="_blank" class="block" data-tilt><div class="link glass bg-white/10">Shop & Presets</div></a>
+      <a href="mailto:hello@namakamu.com" class="block" data-tilt><div class="link glass">Business Inquiry</div></a>
     </div>
   </div>
 
-  <!-- QR Modal -->
-  <div id="qrModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden" onclick="this.classList.add('hidden')">
-    <div class="glass p-12 rounded-3xl" onclick="event.stopPropagation()">
-      <h3 class="text-2xl font-bold mb-8">Scan to Save</h3>
-      <div id="qrcode" class="mx-auto"></div>
-    </div>
-  </div>
-
-  <!-- CHATBOT — Elegan Maksimal -->
+  <!-- AI Chatbot Super Cerdas -->
   <div id="chatbot">
-    <div id="chatToggle" class="text-white">
-      <i class="fas fa-comment-dots"></i>
-    </div>
-
+    <div id="chatToggle" class="text-white"><i class="fas fa-robot"></i></div>
     <div id="chatBox" class="glass">
       <div class="p-6 border-b border-white/10 flex items-center gap-4">
-        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-zinc-600 to-zinc-800 flex items-center justify-center text-xl font-bold">@</div>
+        <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center font-bold">@</div>
         <div>
-          <div class="font-bold">@namakamu</div>
-          <div class="text-xs text-gray-400">Always here for you</div>
+          <div class="font-bold">@namakamu AI</div>
+          <div class="text-xs text-gray-400">Always here • Ask anything</div>
         </div>
         <button onclick="document.getElementById('chatbot').classList.remove('open')" class="ml-auto text-2xl opacity-60 hover:opacity-100">×</button>
       </div>
-
-      <div id="messages" class="text-sm"></div>
-
+      <div id="messages"></div>
       <div class="p-5 border-t border-white/10 flex gap-3">
-        <input type="text" id="userInput" placeholder="Message..." class="flex-1 bg-white/5 rounded-full px-5 py-3 text-white placeholder-gray-500 focus:outline-none focus:bg-white/10 transition">
-        <button onclick="sendMessage()" class="bg-white/10 rounded-full p-3 hover:bg-white/20 transition">
-          <i class="fas fa-paper-plane"></i>
-        </button>
+        <input type="text" id="userInput" placeholder="Ask me anything..." class="flex-1 bg-white/5 rounded-full px-6 py-4 text-white placeholder-gray-500 focus:outline-none focus:bg-white/10 transition">
+        <button onclick="sendMessage()" class="bg-white/10 rounded-full p-4 hover:bg-white/20 transition"><i class="fas fa-paper-plane"></i></button>
       </div>
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer class="fixed bottom-6 text-center text-gray-600 text-xs font-geist-mono">
-    © 2025 @namakamu — Crafted with silence
-  </footer>
+  <footer class="fixed bottom-6 text-gray-600 text-xs font-geist-mono">© 2025 @namakamu</footer>
 
   <script>
-    // QR Code
-    document.getElementById('qrModal').addEventListener('click', e => {
-      if (e.target.id === 'qrModal') e.target.classList.add('hidden');
-    });
-    document.querySelectorAll('[onclick*="qrModal"]').forEach(el => {
-      el.addEventListener('click', () => {
-        document.getElementById('qrModal').classList.remove('hidden');
-        document.getElementById('qrcode').innerHTML = "";
-        new QRCode(document.getElementById('qrcode'), {
-          text: window.location.href,
-          width: 220, height: 220,
-          colorDark: "#ffffff", colorLight: "#00000000"
-        });
-      });
+    // ==== GANTI DENGAN API KAMU (REKOMENDASI: GROK atau OPENAI) ====
+    const AI_KEY = "sk-or-v1-xxx"; // atau Grok: "grok-xxx"
+    const AI_URL = "https://openrouter.ai/api/v1/chat/completions"; // atau xAI endpoint
+
+    // QR Code — Muncul otomatis
+    new QRCode(document.getElementById('qrcode'), {
+      text: window.location.href,
+      width: 220, height: 220,
+      colorDark: "#ffffff", colorLight: "#00000000",
+      correctLevel: QRCode.CorrectLevel.H
     });
 
-    // Chatbot Toggle
+    // Chatbot
     document.getElementById('chatToggle').onclick = () => {
       document.getElementById('chatbot').classList.toggle('open');
       if (!document.getElementById('messages').innerHTML) {
-        setTimeout(() => addMessage('ai', 'Halo. Ada yang bisa aku bantu?'), 600);
+        setTimeout(() => addMessage('ai', 'Halo. Ada yang bisa aku bantu?'), 500);
       }
     };
 
-    // Chat Functions
     function addMessage(sender, text) {
       const div = document.createElement('div');
       div.className = `msg ${sender}`;
-      div.textContent = text;
+      div.innerHTML = text.replace(/\n/g, '<br>');
       document.getElementById('messages').appendChild(div);
       div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    function sendMessage() {
+    async function sendMessage() {
       const input = document.getElementById('userInput');
       const msg = input.value.trim();
       if (!msg) return;
@@ -213,22 +134,30 @@
       input.value = '';
 
       const typing = document.createElement('div');
-      typing.className = 'typing';
-      typing.innerHTML = '<span></span><span></span><span></span>';
+      typing.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
       document.getElementById('messages').appendChild(typing);
-      document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
 
-      setTimeout(() => {
+      try {
+        const res = await fetch(AI_URL, {
+          method: "POST",
+          headers: { "Authorization": `Bearer ${AI_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "openai/gpt-4o-mini", // atau "x-ai/grok-beta"
+            messages: [
+              { role: "system", content: "Kamu adalah AI pribadi @namakamu — ramah, profesional, dan langsung to the point." },
+              { role: "user", content: msg }
+            ],
+            temperature: 0.7
+          })
+        });
+        const data = await res.json();
+        const reply = data.choices?.[0]?.message?.content || "Maaf, aku lagi sibuk nih.";
         typing.remove();
-        const replies = [
-          "Sedang aku proses ya.",
-          "Noted.",
-          "Instagram? instagram.com/namakamu",
-          "Shop ada di bio ya.",
-          "Senang bisa membantu."
-        ];
-        addMessage('ai', replies[Math.floor(Math.random() * replies.length)]);
-      }, 1200 + Math.random() * 1500);
+        addMessage('ai', reply);
+      } catch (e) {
+        typing.remove();
+        addMessage('ai', 'Internetnya lagi lelet, coba lagi ya.');
+      }
     }
 
     document.getElementById('userInput').addEventListener('keypress', e => {
@@ -236,9 +165,7 @@
     });
 
     // Tilt
-    VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
-      max: 6, speed: 800, glare: true, "max-glare": 0.3
-    });
+    VanillaTilt.init(document.querySelectorAll("[data-tilt]"), { max: 5, speed: 800, glare: true, "max-glare": 0.2 });
   </script>
 </body>
 </html>
