@@ -1,193 +1,179 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Rexsaa Site</title>
-  <meta name="description" content="Link Bio Rexsaa Site"/>
-  <meta name="theme-color" content="#000000">
+  <title>@namakamu | GOD MODE</title>
+  <meta name="description" content="Creator • Visioner • Legend in the making"/>
+  <meta name="theme-color" content="#8b5cf6"/>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="data:application/manifest+json,{
+    \"name\":\"@namakamu\",\"short_name\":\"namakamu\",\"icons\":[{\"src\":\"https://images.unsplash.com/photo-1517841905240-472988babdf9?w=192\",\"sizes\":\"192x192\",\"type\":\"image/png\"}],
+    \"start_url\":\".\",\"display\":\"standalone\",\"background_color\":\"#000000\",\"theme_color\":\"#8b5cf6\"}">
 
   <!-- Libraries -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.0/dist/vanilla-tilt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-  <!-- QR Code Library -->
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
 
   <style>
-    :root { --bg: #0a0a0a; --text: #ffffff; --card: rgba(255,255,255,0.05); --accent: #8b5cf6; }
-    [data-theme="light"] { --bg: #f9fafb; --text: #111111; --card: rgba(0,0,0,0.05); --accent: #a78bfa; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); transition: all 0.6s; overflow-x: hidden; }
-    #particles-js { position: fixed; inset: 0; z-index: 1; }
-    .content { position: relative; z-index: 10; }
-    .glass { backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
-    .mouse-trail { position: fixed; width: 24px; height: 24px; pointer-events: none; border-radius: 50%; background: radial-gradient(circle, #8b5cf6 10%, transparent 70%); transform: translate(-50%, -50%); z-index: 9999; opacity: 0.6; mix-blend-mode: screen; }
-    .gradient-text { background: linear-gradient(90deg, #8b5cf6, #ec4899, #06b6d4); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-    .blink { animation: blink 1s infinite; }
-    @keyframes blink { 50% { opacity: 0; } }
-    @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+    :root { --accent: #8b5cf6; }
+    [data-theme="light"] { --bg: #f8fafc; --text: #0f172a; --card: rgba(255,255,255,0.8); }
+    [data-theme="dark"]  { --bg: #050507; --text: #ffffff; --card: rgba(255,255,255,0.06); }
+    body { margin:0; font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; min-height:100dvh; display:flex; align-items:center; justify-content:center; transition:background 0.8s,color 0.8s; }
+    #particles-js { position:fixed; inset:0; z-index:1; }
+    .content { position:relative; z-index:10; }
+    .glass { backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); }
+    .blob { position:fixed; border-radius:100%; filter:blur(120px); opacity:0.4; animation:blob 20s infinite; pointer-events:none; }
+    @keyframes blob { 0%,100% { transform:translate(0,0) scale(1); } 50% { transform:translate(30vw,-30vh) scale(1.4); } }
+    .mouse-trail { position:fixed; width:30px; height:30px; background:radial-gradient(circle, #8b5cf6 10%, transparent 70%); border-radius:50%; pointer-events:none; transform:translate(-50%,-50%); z-index:9999; mix-blend-mode:screen; opacity:0.6; }
+    .gradient-text { background:linear-gradient(90deg,#8b5cf6,#ec4899,#06b6d4); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+    .blink { animation:blink 1s infinite; } @keyframes blink { 50% { opacity:0; } }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center">
+<body class="relative">
 
   <!-- Mouse Trail -->
   <div id="trail" class="mouse-trail"></div>
 
-  <!-- Particles Background -->
+  <!-- Morphing Blobs -->
+  <div class="blob w-96 h-96 bg-purple-600 top-0 left-0"></div>
+  <div class="blob w-96 h-96 bg-pink-600 bottom-0 right-0 delay-1000"></div>
+
+  <!-- Particles -->
   <div id="particles-js"></div>
 
   <div class="content max-w-md w-full px-6 py-12">
 
-    <!-- Theme Toggle -->
-    <button id="themeToggle" class="fixed top-6 right-6 z-50 w-14 h-14 rounded-full glass border border-white/20 flex items-center justify-center text-2xl hover:scale-110 transition shadow-lg">
+    <!-- Buttons Fixed -->
+    <button id="qrBtn" class="fixed top-6 left-6 z-50 w-14 h-14 rounded-full glass border border-white/20 flex items-center justify-center text-2xl hover:scale-110 transition">
+      <i class="fas fa-qrcode"></i>
+    </button>
+    <button id="themeToggle" class="fixed top-6 right-6 z-50 w-14 h-14 rounded-full glass border border-white/20 flex items-center justify-center text-2xl hover:scale-110 transition">
       <i class="fas fa-moon"></i>
     </button>
 
-    <!-- QR Code Button (atas kanan kiri toggle) -->
-    <button id="qrBtn" class="fixed top-6 left-6 z-50 w-14 h-14 rounded-full glass border border-white/20 flex items-center justify-center text-2xl hover:scale-110 transition shadow-lg">
-      <i class="fas fa-qrcode"></i>
-    </button>
+    <!-- Avatar -->
+    <div class="relative mx-auto w-44 h-44 mb-12 group">
+      <div class="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 via-pink-500 to-cyan-500 blur-3xl opacity-70 group-hover:opacity-100 animate-pulse"></div>
+      <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+           class="relative w-full h-full rounded-full object-cover border-8 border-white/20 shadow-2xl"/>
+    </div>
 
-    <div class="text-center">
+    <!-- Name + Typing -->
+    <h1 class="text-6xl font-black text-center mb-4">
+      <span id="typed" class="gradient-text"></span><span class="blink">|</span>
+    </h1>
+    <p class="text-center text-gray-400 text-lg mb-8">Digital Artist • Creator • Living Legend</p>
 
-      <!-- Avatar dengan ring berputar -->
-      <div class="relative mx-auto w-44 h-44 mb-10 group">
-        <div class="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 via-pink-500 to-cyan-500 blur-3xl opacity-70 group-hover:opacity-100 animate-pulse"></div>
-        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-             class="relative w-full h-full rounded-full object-cover border-4 border-white/30 shadow-2xl"/>
-        <div class="absolute inset-0 rounded-full border-4 border-white/10 animate-spin-slow"></div>
-      </div>
+    <!-- Spotify Now Playing -->
+    <div id="spotify" class="glass bg-white/5 border border-white/10 rounded-3xl p-5 mb-8 text-center hidden">
+      <p class="text-sm text-gray-400">Now Playing on Spotify</p>
+      <p id="track" class="font-bold text-lg mt-2"></p>
+      <p id="artist" class="text-sm text-gray-400"></p>
+    </div>
 
-      <!-- Typing Name -->
-      <h1 class="text-6xl font-black mb-4">
-        <span id="typed" class="gradient-text"></span><span class="blink">|</span>
-      </h1>
-      <p class="text-gray-400 text-lg mb-10">Digital Creator • Photographer • Living the dream</p>
+    <!-- Social Icons -->
+    <div class="flex justify-center gap-6 mb-12">
+      <a href="#" class="w-16 h-16 rounded-2xl glass border border-white/20 flex items-center justify-center text-3xl hover:scale-125 transition tilt" data-tilt><i class="fab fa-instagram gradient-text"></i></a>
+      <a href="#" class="w-16 h-16 rounded-2xl glass border border-white/20 flex items-center justify-center text-3xl hover:scale-125 transition tilt" data-tilt><i class="fab fa-tiktok"></i></a>
+      <a href="#" class="w-16 h-16 rounded-2xl glass border border-white/20 flex items-center justify-center text-3xl hover:scale-125 transition tilt" data-tilt><i class="fab fa-youtube text-red-500"></i></a>
+    </div>
 
-      <!-- Social Icons -->
-      <div class="flex justify-center gap-6 mb-12">
-        <a href="#" class="w-16 h-16 rounded-2xl glass border border-white/20 flex items-center justify-center text-3xl hover:scale-125 transition tilt" data-tilt><i class="fab fa-instagram gradient-text"></i></a>
-        <a href="#" class="w-16 h-16 rounded-2xl glass border border-white/20 flex items-center justify-center text-3xl hover:scale-125 transition tilt" data-tilt><i class="fab fa-tiktok"></i></a>
-        <a href="#" class="w-16 h-16 rounded-2xl glass border border-white/20 flex items-center justify-center text-3xl hover:scale-125 transition tilt" data-tilt><i class="fab fa-youtube text-red-500"></i></a>
-      </div>
+    <!-- Links -->
+    <div class="space-y-6">
+      <a href="https://instagram.com" target="_blank" class="block" data-tilt><div class="glass bg-white/5 border border-white/10 rounded-3xl p-8 text-center font-bold text-2xl hover:bg-white/10 transition tilt" onclick="clickSound()">Instagram</div></a>
+      <a href="https://youtube.com" target="_blank" class="block" data-tilt><div class="glass bg-white/5 border border-white/10 rounded-3xl p-8 text-center font-bold text-2xl hover:bg-white/10 transition tilt" onclick="clickSound()">YouTube</div></a>
+      <a href="https://tiktok.com" target="_blank" class="block" data-tilt><div class="glass bg-white/5 border border-white/10 rounded-3xl p-8 text-center font-bold text-2xl hover:bg-white/10 transition tilt" onclick="clickSound()">TikTok</div></a>
+      <a href="https://shop.namakamu.com" target="_blank" class="block" data-tilt><div class="glass bg-gradient-to-r from-purple-600/30 to-pink-600/30 border border-purple-500/50 rounded-3xl p-9 text-center font-black text-3xl hover:scale-105 transition tilt shadow-2xl shadow-purple-500/40" onclick="confetti({particleCount:200,spread:100,origin:{y:0.7}});clickSound()">Shop Preset & Merch</div></a>
+      <a href="mailto:hello@namakamu.com" class="block" data-tilt><div class="glass bg-white/5 border border-white/10 rounded-3xl p-8 text-center font-bold text-2xl hover:bg-white/10 transition tilt" onclick="clickSound()">Business</div></a>
+    </div>
 
-      <!-- Links dengan 3D Tilt -->
-      <div class="space-y-6">
-        <a href="https://instagram.com/elgarexsaa" target="_blank" class="block" data-tilt data-tilt-glare data-tilt-max-glare="0.5">
-          <div class="glass bg-white/5 border border-white/10 rounded-3xl p-8 text-center font-bold text-2xl hover:bg-white/10 transition tilt cursor-pointer" onclick="playSound()">
-            <span class="gradient-text">Instagram</span>
-          </div>
-        </a>
-
-        <a href="https://youtube.com/elgaganz" target="_blank" class="block" data-tilt>
-          <div class="glass bg-white/5 border border-white/10 rounded-3xl p-8 text-center font-bold text-2xl hover:bg-white/10 transition tilt cursor-pointer" onclick="playSound()">
-            <span class="gradient-text">YouTube Channel</span>
-          </div>
-        </a>
-
-        <a href="https://tiktok.com/rexsaa4a" target="_blank" class="block" data-tilt>
-          <div class="glass bg-white/5 border border-white/10 rounded-3xl p-8 text-center font-bold text-2xl hover:bg-white/10 transition tilt cursor-pointer" onclick="playSound()">
-            TikTok
-          </div>
-        </a>
-
-        <a href="https://shop.namakamu.com" target="_blank" class="block" onclick="confetti({particleCount:200, spread:90, origin:{y:0.7}})" data-tilt data-tilt-max="10">
-          <div class="glass bg-gradient-to-r from-purple-600/30 to-pink-600/30 border border-purple-500/50 rounded-3xl p-9 text-center font-black text-3xl hover:scale-105 transition tilt shadow-2xl shadow-purple-500/40 cursor-pointer" onclick="playSound()">
-            Shop
-          </div>
-        </a>
-
-        <a href="mailto:rexsaelga@gmail.com" class="block" data-tilt>
-          <div class="glass bg-white/5 border border-white/10 rounded-3xl p-8 text-center font-bold text-2xl hover:bg-white/10 transition tilt cursor-pointer" onclick="playSound()">
-            Mail
-          </div>
-        </a>
-      </div>
-
-      <p class="text-center mt-16 text-gray-500 text-sm">©2025 RexsaaSite</p>
+    <!-- Visitor Counter -->
+    <div class="text-center mt-12 text-gray-500 text-sm">
+      <p>Live Visitors: <span id="visitors">—</span> people right now</p>
+      <p class="mt-4">© 2025 @namakamu — Built to dominate the internet</p>
     </div>
   </div>
 
-  <!-- QR Code Modal -->
-  <div id="qrModal" class="fixed inset-0 bg-black/80 glass flex items-center justify-center z-50 hidden">
-    <div class="relative bg-white/10 glass border border-white/20 rounded-3xl p-10 max-w-xs w-full text-center animate-pulse">
-      <button class="absolute top-4 right-4 text-3xl text-white/70 hover:text-white" onclick="document.getElementById('qrModal').classList.add('hidden')">&times;</button>
-      <h3 class="text-2xl font-bold mb-6 gradient-text">Scan Me</h3>
+  <!-- QR Modal -->
+  <div id="qrModal" class="fixed inset-0 bg-black/90 glass flex items-center justify-center z-50 hidden">
+    <div class="relative bg-white/10 glass border border-white/20 rounded-3xl p-12 text-center">
+      <button class="absolute top-4 right-6 text-4xl" onclick="document.getElementById('qrModal').classList.add('hidden')">&times;</button>
+      <h3 class="text-3xl font-bold mb-8 gradient-text">Scan Me</h3>
       <div id="qrcode" class="mx-auto"></div>
-      <p class="mt-6 text-sm text-gray-300">Arahkan kamera untuk langsung ke profile</p>
     </div>
   </div>
 
   <!-- Click Sound -->
-  <audio id="clickSound" src="https://freesound.org/data/previews/612/612637_5674468-lq.mp3" preload="auto"></audio>
+  <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" preload="auto"></audio>
 
   <script>
-    // Ganti URL ini dengan link bio kamu yang sebenarnya!
-    const MY_URL = "https://elrexsaa.github.io/io";
+    // ==== CONFIG ====
+    const MY_URL = window.location.href;
+    const SPOTIFY_TOKEN = ""; // ← ISI TOKEN SPOTIFY PREMIUM KAMU DI SINI KALAU MAU NOW PLAYING (lihat tutorial 2 menit di Google)
 
     // Typing
-    new Typed('#typed', {
-      strings: ["Rexsaa", "Programmer", "IT", "Website Developer"],
-      typeSpeed: 100,
-      backSpeed: 60,
-      loop: true,
-      showCursor: false
-    });
+    new Typed('#typed', { strings: ["@namakamu","Creator","Visioner","God Mode"], typeSpeed: 100, backSpeed: 60, loop: true });
 
-    // Particles Ultimate
-    particlesJS("particles-js", {
-      particles: { number: { value: 120 }, color: { value: ["#8b5cf6","#ec4899","#06b6d4","#fbbf24"] },
-        shape: { type: ["circle","star"] }, opacity: { value: 0.6, random: true }, size: { value: 4, random: true },
-        line_linked: { enable: true, distance: 140, color: "#ffffff", opacity: 0.2, width: 1 },
-        move: { enable: true, speed: 3, out_mode: "bounce" }
-      },
-      interactivity: { events: { onhover: { enable: true, mode: "grab" }, onclick: { enable: true, mode: "push" }}},
-      retina_detect: true
-    });
+    // Particles
+    particlesJS("particles-js", { particles:{number:{value:120},color:{value:["#8b5cf6","#ec4899","#06b6d4"]},shape:{type:"circle"},opacity:{value:0.6,random:true},size:{value:4,random:true},line_linked:{enable:true,distance:140,color:"#ffffff",opacity:0.2,width:1},move:{enable:true,speed:3}}, interactivity:{events:{onhover:{enable:true,mode:"grab"},onclick:{enable:true,mode:"push"}}}, retina_detect:true });
 
     // Mouse Trail
-    document.addEventListener('mousemove', e => {
-      document.getElementById('trail').style.left = e.clientX + 'px';
-      document.getElementById('trail').style.top = e.clientY + 'px';
+    document.addEventListener('mousemove', e => { document.getElementById('trail').style.left = e.clientX + 'px'; document.getElementById('trail').style.top = e.clientY + 'px'; });
+
+    // Theme Toggle + Auto Detect
+    const toggle = document.getElementById('themeToggle');
+    const isLight = () => new Date().getHours() >= 6 && new Date().getHours() < 18;
+    if (isLight()) document.documentElement.setAttribute('data-theme','light');
+    toggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      document.documentElement.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+      toggle.innerHTML = current === 'light' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
     });
 
-    // Theme Toggle
-    document.getElementById('themeToggle').addEventListener('click', () => {
-      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      document.documentElement.setAttribute('data-theme', isLight ? 'dark' : 'light');
-      document.querySelector('#themeToggle i').classList.toggle('fa-moon', isLight);
-      document.querySelector('#themeToggle i').classList.toggle('fa-sun', !isLight);
-    });
-
-    // QR Code Generator
+    // QR Code
     document.getElementById('qrBtn').addEventListener('click', () => {
       document.getElementById('qrModal').classList.remove('hidden');
-      document.getElementById('qrcode').innerHTML = ""; // clear
-      new QRCode(document.getElementById('qrcode'), {
-        text: MY_URL,
-        width: 220,
-        height: 220,
-        colorDark: "#ffffff",
-        colorLight: "#00000000",
-        correctLevel: QRCode.CorrectLevel.H
-      });
+      document.getElementById('qrcode').innerHTML = "";
+      new QRCode(document.getElementById('qrcode'), { text: MY_URL, width: 256, height: 256, colorDark: "#ffffff", colorLight: "#0000", correctLevel: QRCode.CorrectLevel.H });
     });
 
     // Click Sound
-    function playSound() {
+    function clickSound() {
       const s = document.getElementById('clickSound');
-      s.currentTime = 0;
-      s.play().catch(() => {});
+      s.currentTime = 0; s.play().catch(()=>{});
     }
 
-    // Init Tilt
-    VanillaTilt.init(document.querySelectorAll(".tilt"), { max: 12, speed: 400, glare: true, "max-glare": 0.4 });
+    // Live Visitor Counter (free API)
+    fetch('https://api.countapi.xyz/hit/namakamu-link.bio/visits')
+      .then(r => r.json())
+      .then(d => document.getElementById('visitors').textContent = d.value.toLocaleString());
+
+    // Spotify Now Playing (optional)
+    if (SPOTIFY_TOKEN) {
+      setInterval(() => {
+        fetch("https://api.spotify.com/v1/me/player/currently-playing", {
+          headers: { "Authorization": "Bearer " + SPOTIFY_TOKEN }
+        }).then(r => r.json()).then(data => {
+          if (data?.is_playing) {
+            document.getElementById('spotify').classList.remove('hidden');
+            document.getElementById('track').textContent = data.item.name;
+            document.getElementById('artist').textContent = data.item.artists[0].name;
+          }
+        }).catch(()=>{});
+      }, 5000);
+    }
+
+    // Tilt
+    VanillaTilt.init(document.querySelectorAll(".tilt"), { max: 15, speed: 400, glare: true, "max-glare": 0.5 });
   </script>
 </body>
 </html>
