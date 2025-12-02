@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>@namakamu | QUANTUM ENTITY</title>
+  <title>@namakamu | Quantum Entity</title>
   <meta name="theme-color" content="#8b5cf6"/>
 
-  <!-- Libraries -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js"></script>
@@ -14,107 +13,190 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
 
   <style>
     body { margin:0; overflow:hidden; height:100dvh; background:#000; color:#fff; font-family:'Inter',sans-serif; }
     #particles-js { position:fixed; inset:0; z-index:1; }
     .content { position:relative; z-index:10; }
-    .glass { backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px); border:1px solid rgba(255,255,255,0.1); }
-    .gradient-text { background:conic-gradient(from 0deg at 50% 50%,#8b5cf6,#ec4899,#06b6d4,#f59e0b,#8b5cf6); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; animation:spin 10s linear infinite; }
+    .glass { backdrop-filter:blur(32px); -webkit-backdrop-filter:blur(32px); border:1px solid rgba(255,255,255,0.08); }
+    .gradient-text { background:conic-gradient(from 0deg at 50% 50%,#8b5cf6,#ec4899,#06b6d4,#f59e0b,#8b5cf6); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; animation:spin 12s linear infinite; }
     @keyframes spin { to { background-position:360deg; } }
-    .mouse-trail { position:fixed; width:40px; height:40px; background:radial-gradient(circle,#8b5cf6 0%,transparent 70%); border-radius:50%; pointer-events:none; transform:translate(-50%,-50%); z-index:9999; mix-blend-mode:screen; opacity:0.8; }
 
-    /* Chatbot Styles */
-    #chatbot { position:fixed; bottom:24px; right:24px; z-index:9999; }
-    #chatToggle { width:64px; height:64px; background:linear-gradient(135deg,#8b5cf6,#ec4899); border-radius:50%; box-shadow:0 10px 30px rgba(139,92,246,0.6); cursor:pointer; transition:all 0.4s; }
-    #chatToggle:hover { transform:scale(1.1); }
-    #chatBox { position:absolute; bottom:80px; right:0; width:380px; height:520px; background:rgba(0,0,0,0.8); border-radius:24px; border:1px solid rgba(139,92,246,0.4); overflow:hidden; transform:scale(0); transition:all 0.4s; }
-    #chatBox.open { transform:scale(1); }
-    #messages { height:420px; padding:20px; overflow-y:auto; }
-    .msg { margin:10px 0; padding:12px 16px; border-radius:18px; max-width:80%; }
-    .user { background:#8b5cf6; color:white; align-self:flex-end; margin-left:auto; }
-    .ai { background:rgba(255,255,255,0.1); color:#fff; }
+    /* CHATBOT — SMOOTH AF */
+    #chatbot { 
+      position:fixed; bottom:24px; right:24px; z-index:9999; 
+      transform:translateY(120%) translateY(20px);
+      transition:all 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    #chatbot.open { transform:translateY(0); }
+
+    #chatToggle {
+      width:68px; height:68px; 
+      background:linear-gradient(135deg,#8b5cf6,#ec4899);
+      border-radius:50%; 
+      box-shadow:0 20px 40px rgba(139,92,246,0.5);
+      cursor:pointer; 
+      transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+      animation:float 6s ease-in-out infinite;
+    }
+    #chatToggle:hover { transform:scale(1.15) rotate(10deg); box-shadow:0 30px 60px rgba(139,92,246,0.7); }
+
+    @keyframes float {
+      0%,100% { transform:translateY(0); }
+      50% { transform:translateY(-12px); }
+    }
+
+    #chatBox {
+      position:absolute; bottom:84px; right:0;
+      width:400px; height:580px;
+      background:rgba(15,15,25,0.95);
+      border-radius:32px;
+      overflow:hidden;
+      transform-origin:bottom right;
+      transform:scale(0) rotate(15deg);
+      opacity:0;
+      transition:all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow:0 50px 100px rgba(0,0,0,0.6);
+    }
+    #chatbot.open #chatBox {
+      transform:scale(1) rotate(0deg);
+      opacity:1;
+    }
+
+    #chatHeader {
+      background:linear-gradient(135deg,#8b5cf6,#ec4899);
+      padding:20px;
+      color:white;
+      position:relative;
+      overflow:hidden;
+    }
+    #chatHeader::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(45deg,transparent 30%,rgba(255,255,255,0.1) 50%,transparent 70%);
+      transform:translateX(-100%);
+      animation:shimmer 3s infinite;
+    }
+    @keyframes shimmer { 100% { transform:translateX(100%); } }
+
+    .ai-avatar {
+      width:48px; height:48px;
+      background:linear-gradient(135deg,#ec4899,#8b5cf6);
+      border-radius:50%;
+      animation:breath 4s ease-in-out infinite;
+      position:relative;
+    }
+    .ai-avatar::after {
+      content:''; position:absolute; inset:4px;
+      background:url('https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200') center/cover;
+      border-radius:50%;
+      border:3px solid rgba(255,255,255,0.3);
+    }
+    @keyframes breath {
+      0%,100% { transform:scale(1); box-shadow:0 0 20px rgba(139,92,246,0.4); }
+      50% { transform:scale(1.05); box-shadow:0 0 40px rgba(139,92,246,0.8); }
+    }
+
+    #messages {
+      height:440px; padding:20px; overflow-y:auto;
+      display:flex; flex-direction:column; gap:16px;
+    }
+    .msg {
+      max-width:80%; padding:14px 20px; border-radius:24px;
+      animation:msgIn 0.6s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+      opacity:0; transform:translateY(20px);
+    }
+    @keyframes msgIn {
+      to { opacity:1; transform:translateY(0); }
+    }
+    .user { background:#8b5cf6; color:white; align-self:flex-end; border-bottom-right-radius:8px; }
+    .ai { background:rgba(255,255,255,0.1); color:#fff; align-self:flex-start; border-bottom-left-radius:8px; backdrop-filter:blur(10px); }
+
+    .typing {
+      display:flex; gap:6px; padding:10px 0;
+    }
+    .typing span {
+      width:10px; height:10px; background:#8b5cf6; border-radius:50%;
+      animation:typing 1.4s infinite;
+    }
+    .typing span:nth-child(2) { animation-delay:0.2s; }
+    .typing span:nth-child(3) { animation-delay:0.4s; }
+    @keyframes typing {
+      0%,100% { transform:translateY(0); }
+      50% { transform:translateY(-15px); }
+    }
+
+    #userInput {
+      background:rgba(255,255,255,0.1);
+      border:none; border-radius:50px; padding:16px 20px;
+      color:white; flex:1;
+      transition:all 0.3s;
+    }
+    #userInput:focus { outline:none; background:rgba(255,255,255,0.2); box-shadow:0 0 30px rgba(139,92,246,0.4); }
   </style>
 </head>
 <body class="relative">
 
-  <!-- Particles -->
+  <!-- Particles & Content (sama seperti sebelumnya) -->
   <div id="particles-js"></div>
-  <div id="trail" class="mouse-trail"></div>
 
   <div class="content max-w-2xl mx-auto px-6 py-20 text-center">
-
-    <!-- Avatar + Name -->
     <div class="relative mx-auto w-48 h-48 mb-12 group">
       <div class="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 via-pink-500 to-cyan-500 blur-3xl opacity-70 animate-pulse"></div>
       <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800" class="relative w-full h-full rounded-full object-cover border-8 border-white/20 shadow-2xl"/>
     </div>
-
-    <h1 class="text-8xl font-black mb-6">
-      <span id="typed" class="gradient-text"></span>
-    </h1>
-    <p class="text-xl text-gray-300 mb-12">Aku hidup di internet. Tanya apa saja.</p>
-
-    <!-- Links -->
+    <h1 class="text-8xl font-black mb-6"><span id="typed" class="gradient-text"></span></h1>
+    <p class="text-xl text-gray-300 mb-12">Aku hidup di internet. Chat sama AI-ku.</p>
+    <!-- Links (sama) -->
     <div class="space-y-6 max-w-md mx-auto">
       <a href="#" class="block" data-tilt><div class="glass bg-white/5 rounded-3xl p-8 text-3xl font-bold hover:bg-white/10 transition">Instagram</div></a>
       <a href="#" class="block" data-tilt><div class="glass bg-white/5 rounded-3xl p-8 text-3xl font-bold hover:bg-white/10 transition">YouTube</div></a>
-      <a href="#" class="block" onclick="confetti({particleCount:300,spread:120})"><div class="glass bg-gradient-to-r from-purple-600/40 to-pink-600/40 rounded-3xl p-10 text-4xl font-black shadow-2xl shadow-purple-600/50">Shop & Merch</div></a>
+      <a href="#" onclick="confetti({particleCount:300,spread:120})"><div class="glass bg-gradient-to-r from-purple-600/40 to-pink-600/40 rounded-3xl p-10 text-4xl font-black shadow-2xl shadow-purple-600/50">Shop & Merch</div></a>
     </div>
   </div>
 
-  <!-- AI CHATBOT -->
+  <!-- CHATBOT DENGAN ANIMASI GILA -->
   <div id="chatbot">
-    <div id="chatToggle" class="flex items-center justify-center text-3xl text-white shadow-2xl">
+    <div id="chatToggle" class="flex items-center justify-center text-3xl text-white">
       <i class="fas fa-robot"></i>
     </div>
+
     <div id="chatBox" class="glass">
-      <div class="bg-gradient-to-r from-purple-600 to-pink-600 p-4 text-white font-bold text-center">AI @namakamu</div>
-      <div id="messages" class="flex flex-col gap-3"></div>
-      <div class="p-4 border-t border-white/10 flex gap-2">
-        <input type="text" id="userInput" placeholder="Tanya apa saja..." class="flex-1 bg-white/10 rounded-full px-4 py-3 text-white placeholder-gray-400 focus:outline-none">
-        <button onclick="sendMessage()" class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-full p-3 text-white hover:scale-110 transition">
+      <div id="chatHeader" class="flex items-center gap-4 text-white">
+        <div class="ai-avatar"></div>
+        <div>
+          <div class="font-bold text-lg">@namakamu AI</div>
+          <div class="text-sm opacity-80">Always online • Quantum Powered</div>
+        </div>
+        <button onclick="document.getElementById('chatbot').classList.remove('open')" class="ml-auto text-2xl opacity-70 hover:opacity-100">×</button>
+      </div>
+
+      <div id="messages"></div>
+
+      <div class="p-4 border-t border-white/10 flex gap-3 items-center">
+        <input type="text" id="userInput" placeholder="Ketik pesan..." class="flex-1">
+        <button onclick="sendMessage()" class="bg-gradient-to-r from-purple-600 to-pink-600 rounded-full p-4 text-white hover:scale-110 transition shadow-lg">
           <i class="fas fa-paper-plane"></i>
-        </button>
-        <button onclick="startVoice()" class="bg-white/10 rounded-full p-3 text-white hover:bg-white/20 transition">
-          <i class="fas fa-microphone"></i>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- QR Modal -->
-  <div id="qrModal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-50 hidden">
-    <div class="glass rounded-3xl p-16 text-center">
-      <h3 class="text-4xl font-bold mb-8 gradient-text">Scan to Enter</h3>
-      <div id="qrcode"></div>
-    </div>
-  </div>
-
   <script>
-    // ==== CONFIG AI (GANTI DENGAN API KAMU) ====
-    const AI_PROVIDER = "openai"; // atau "grok"
-    const OPENAI_KEY = "sk-xxx"; // isi kalau pakai OpenAI
-    const GROK_KEY = "grok-xxx"; // isi kalau pakai xAI Grok API
-
     // Typing
-    new Typed('#typed', { strings: ["@namakamu","Entity","God","Your AI"], typeSpeed: 100, loop: true });
+    new Typed('#typed', { strings: ["@namakamu","Quantum","Alive","Talk to me"], typeSpeed: 100, loop: true });
 
     // Particles
-    particlesJS("particles-js", { particles:{number:{value:180},color:{value:["#8b5cf6","#ec4899","#06b6d4"]},size:{value:5,random:true},line_linked:{enable:true,opacity:0.3},move:{speed:5}}, interactivity:{events:{onhover:{enable:true,mode:"repulse"}}}});
+    particlesJS("particles-js", { particles:{number:{value:200},color:{value:["#8b5cf6","#ec4899","#06b6d4"]},size:{value:5,random:true},line_linked:{enable:true,opacity:0.25},move:{speed:4}}, interactivity:{events:{onhover:{enable:true,mode:"repulse"}}}});
 
-    // Mouse Trail
-    document.addEventListener('mousemove', e => {
-      document.getElementById('trail').style.left = e.clientX + 'px';
-      document.getElementById('trail').style.top = e.clientY + 'px';
-    });
-
-    // Chatbot Toggle
+    // Chatbot Toggle dengan animasi halus
     document.getElementById('chatToggle').onclick = () => {
-      document.getElementById('chatBox').classList.toggle('open');
-      if (!document.getElementById('messages').innerHTML) addMessage("ai", "Halo! Aku AI versi digital dari @namakamu. Mau ngobrol apa?");
+      const bot = document.getElementById('chatbot');
+      bot.classList.toggle('open');
+      if (bot.classList.contains('open') && !document.getElementById('messages').innerHTML) {
+        setTimeout(() => addMessage("ai", "Halo sayang Aku AI versi digital @namakamu. Mau ngobrol apa hari ini?"), 600);
+      }
     };
 
     // Send Message
@@ -125,53 +207,32 @@
       addMessage("user", msg);
       input.value = "";
 
-      // Simulasi loading
-      const loading = addMessage("ai", "🤔 Sedang mikir...");
+      const typing = document.createElement('div');
+      typing.className = "typing";
+      typing.innerHTML = "<span></span><span></span><span></span>";
+      document.getElementById('messages').appendChild(typing);
+      document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
 
-      let response = "Maaf, AI lagi tidur 😴";
-      try {
-        if (AI_PROVIDER === "openai") {
-          const res = await fetch("https://api.openai.com/v1/chat/completions", {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${OPENAI_KEY}` },
-            body: JSON.stringify({ model: "gpt-4o-mini", messages: [{role:"system",content:"Kamu adalah AI pribadi dari @namakamu, creator keren, ramah, dan sedikit genit."},{role:"user",content:msg}], temperature: 0.8 })
-          });
-          const data = await res.json();
-          response = data.choices[0].message.content;
-        } else if (AI_PROVIDER === "grok") {
-          const res = await fetch("https://api.x.ai/v1/chat/completions", {
-            method: "POST",
-            headers: { "Authorization": `Bearer ${GROK_KEY}`, "Content-Type": "application/json" },
-            body: JSON.stringify({ model: "grok-beta", messages: [{role:"user",content:msg}] })
-          });
-          const data = await res.json();
-          response = data.choices[0].message.content;
-        }
-      } catch(e) { response = "Waduh, servernya lagi ngambek 😅 Coba lagi ya!"; }
-
-      loading.innerHTML = `<div class="msg ai">${response}</div>`;
+      // Simulasi AI response (ganti dengan API kalau mau)
+      setTimeout(() => {
+        typing.remove();
+        const responses = [
+          "Wih ganteng banget sih kamu nanya gitu",
+          "Aku lagi mikirin kamu juga kok",
+          "Boleh dong diajak kolab!",
+          "Link Instagram? Nih → instagram.com/namakamu",
+          "Kamu manis banget sih hari ini"
+        ];
+        addMessage("ai", responses[Math.floor(Math.random() * responses.length)]);
+      }, 1500 + Math.random() * 2000);
     }
 
     function addMessage(sender, text) {
       const div = document.createElement('div');
-      div.className = sender === "user" ? "msg user" : "msg ai";
-      div.innerHTML = text;
+      div.className = `msg ${sender}`;
+      div.textContent = text;
       document.getElementById('messages').appendChild(div);
-      div.scrollIntoView({behavior:"smooth"});
-      return div;
-    }
-
-    // Voice Input
-    function startVoice() {
-      if ('webkitSpeechRecognition' in window) {
-        const recognition = new webkitSpeechRecognition();
-        recognition.lang = "id-ID";
-        recognition.onresult = e => {
-          document.getElementById('userInput').value = e.results[0][0].transcript;
-          sendMessage();
-        };
-        recognition.start();
-      }
+      document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
     }
 
     // Enter to send
